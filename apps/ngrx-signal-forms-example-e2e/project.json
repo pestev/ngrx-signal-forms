@@ -1,0 +1,33 @@
+{
+  "name": "ngrx-signal-forms-example-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/ngrx-signal-forms-example-e2e/src",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/ngrx-signal-forms-example-e2e/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "ngrx-signal-forms-example:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "ngrx-signal-forms-example:serve:production"
+        },
+        "ci": {
+          "devServerTarget": "ngrx-signal-forms-example:serve-static"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/ngrx-signal-forms-example-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["ngrx-signal-forms-example"]
+}
