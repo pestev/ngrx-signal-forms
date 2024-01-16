@@ -8,6 +8,7 @@ export type NgrxControlValue = object | Primitive | NgrxControlValue[];
 
 export interface BaseControl<TValue = unknown> {
   id: string;
+  vId: string;
   isDirty: boolean;
   isDisabled: boolean;
   isTouched: boolean;

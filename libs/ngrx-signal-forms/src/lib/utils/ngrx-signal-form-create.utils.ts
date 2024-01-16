@@ -1,40 +1,47 @@
-import { NgrxSignalFormState } from '../types/ngrx-signal-form-deduced.types';
+import { NgrxSignalFormState }   from '../types/ngrx-signal-form-deduced.types';
 import {
   NgrxControlValue,
   NgrxSignalFormArray,
   NgrxSignalFormControl,
   NgrxSignalFormGroup,
   Primitive
-}                              from '../types/ngrx-signal-form.types';
-import { isObject }            from './utils';
+}                                from '../types/ngrx-signal-form.types';
+import { isObject, isPrimitive } from './utils';
 
 export function creator<
-  TValue extends NgrxControlValue
+  TValue
 >(
   idPath: string,
-  value: TValue
+  value: TValue,
+  vIdPath: string | null = null
 ): NgrxSignalFormState<TValue> {
 
   if (isObject(value)) {
-    return generateGroup(idPath, value as object) as NgrxSignalFormState<TValue>;
+    return generateGroup(idPath, value as object, vIdPath) as NgrxSignalFormState<TValue>;
   }
 
   if (Array.isArray(value)) {
-    return generateArray(idPath, value) as NgrxSignalFormState<TValue>;
+    return generateArray(idPath, value, vIdPath) as NgrxSignalFormState<TValue>;
   }
 
-  return generateControl(idPath, value as Primitive) as NgrxSignalFormState<TValue>;
+  if (isPrimitive(value)) {
+    return generateControl(idPath, value as Primitive, vIdPath) as NgrxSignalFormState<TValue>;
+  }
+
+  throw new Error('Unknown value type');
 }
 
 export function generateGroup<
   T extends object
 >(
   id: string,
-  value: T
+  value: T,
+  vId: string | null
 ): NgrxSignalFormGroup<T> {
 
   return {
     id,
+    vId: vId || id,
     value,
     hasErrors: false,
     hasWarnings: false,
@@ -43,7 +50,7 @@ export function generateGroup<
     isTouched: false,
     errors: {},
     warnings: {},
-    controls: generateGroupControls(id, value)
+    controls: generateGroupControls(id, value, vId)
   };
 }
 
@@ -51,12 +58,13 @@ function generateGroupControls<
   T extends object
 >(
   idBase: string,
-  value: T
+  value: T,
+  vIdBase: string | null
 ): NgrxSignalFormGroup<T>['controls'] {
 
   const r = Object.entries(value).map(([ k, v ]) => [
     k,
-    creator(`${ idBase }.${ k }`, v)
+    creator(`${ idBase }.${ k }`, v, `${ vIdBase || idBase }.${ k }`)
   ]);
 
   return Object.fromEntries(r);
@@ -66,11 +74,13 @@ function generateArray<
   T extends NgrxControlValue
 >(
   id: string,
-  value: T[]
+  value: T[],
+  vId: string | null
 ): NgrxSignalFormArray<T> {
 
   return {
     id,
+    vId: vId || id,
     value,
     hasErrors: false,
     hasWarnings: false,
@@ -79,7 +89,7 @@ function generateArray<
     isTouched: false,
     errors: {},
     warnings: {},
-    controls: generateArrayControls(id, value)
+    controls: generateArrayControls(id, value, vId || id)
   };
 }
 
@@ -87,21 +97,24 @@ function generateArrayControls<
   TValue extends NgrxControlValue
 >(
   idBase: string,
-  value: Array<TValue>
+  value: Array<TValue>,
+  vIdBase: string | null
 ): NgrxSignalFormArray<TValue>['controls'] {
 
-  return value.map((v, i) => creator(`${ idBase }.${ i }`, v));
+  return value.map((v, i) => creator(`${ idBase }.${ i }`, v, vIdBase));
 }
 
 function generateControl<
   T extends Primitive
 >(
   id: string,
-  value: T
+  value: T,
+  vId: string | null
 ): NgrxSignalFormControl<T> {
 
   return {
     id,
+    vId: vId || id,
     value,
     hasErrors: false,
     hasWarnings: false,

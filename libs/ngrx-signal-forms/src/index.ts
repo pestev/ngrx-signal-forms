@@ -7,3 +7,6 @@ export * from './lib/directives/ngrx-signal-form.directive';
 export * from './lib/directives/ngrx-signal-form-control.directive';
 
 export * from './lib/types/ngrx-signal-form.types';
+
+export * from './lib/validation/ngrx-signal-form-validation.types';
+export * from './lib/validation/validators/required.validator';

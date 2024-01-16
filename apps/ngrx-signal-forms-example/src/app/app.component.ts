@@ -4,6 +4,7 @@ import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective,
+  required,
   withNgrxSignalForm
 }                                    from '@ngrx-signal-forms';
 import { signalStore }               from '@ngrx/signals';
@@ -35,7 +36,12 @@ const state = {
 const signalExampleStore = signalStore(
   withNgrxSignalForm({
     formName: FORM_NAME,
-    formValue: state
+    formValue: state,
+    // TODO somehow remove typescript error
+    //@ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
+    validators: {
+      name: required
+    }
   })
 );
 
@@ -97,4 +103,9 @@ export class AppComponent {
   streetWarning(): void {
     this.store.updateWarnings('exampleForm.address.street', { someError: 'Description for some error' });
   }
+
+  validate(): void {
+    this.store.validate();
+  }
+
 }

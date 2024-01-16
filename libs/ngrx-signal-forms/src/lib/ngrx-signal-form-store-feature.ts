@@ -38,6 +38,10 @@ import {
   setWarnings
 }                           from './updaters/control-updaters/set-warnings.updater';
 import {
+  validate
+}                           from './updaters/control-updaters/validate.updater';
+import {
+  updateRecursive,
   updatersPipe
 }                           from './updaters/ngrx-signal-form-control.updater';
 import {
@@ -46,6 +50,13 @@ import {
 import {
   creator
 }                           from './utils/ngrx-signal-form-create.utils';
+import {
+  ValidatorConfig,
+  ValidatorFn
+}                           from './validation/ngrx-signal-form-validation.types';
+import {
+  required
+}                           from './validation/validators/required.validator';
 
 export type NgrxSignalFormStoreFeatureMethods = {
   updateValue(controlId: string, value: NgrxControlValue): void;
@@ -53,6 +64,7 @@ export type NgrxSignalFormStoreFeatureMethods = {
   updateDisabled(controlId: string, isDisabled: boolean): void;
   updateErrors(controlId: string, errors: Record<string, unknown>): void;
   updateWarnings(controlId: string, warnings: Record<string, unknown>): void;
+  validate(): void;
 }
 
 export type NgrxSignalFormFeatureState<
@@ -75,7 +87,8 @@ export function withNgrxSignalForm<
   TFormValue extends NgrxControlValue
 >(config: {
   formName: TFormName,
-  formValue: TFormValue
+  formValue: TFormValue,
+  validators?: ValidatorConfig<TFormValue>
 }): SignalStoreFeature<
   {
     state: object,
@@ -104,14 +117,26 @@ export function withNgrxSignalForm<
  */
 export function withNgrxSignalForm<
   TFormName extends string,
-  TFormValue extends NgrxControlValue,
+  TFormValue
 >(config: {
   formName: TFormName,
-  formValue: TFormValue
+  formValue: TFormValue,
+  validators?: ValidatorConfig<TFormValue>,
+  softValidators?: ValidatorConfig<TFormValue>
 }): SignalStoreFeature {
 
   const { formName, formValue } = config;
   const formState = creator(formName, formValue);
+
+  // TODO this is mock, make normalization function which take config.validators and transform into below type
+  const normalizedValidators: Record<string, ValidatorFn> = {
+    [`${ formName }.name`]: required,
+    [`${ formName }.address.city`]: required,
+    [`${ formName }.items.itemName`]: required
+  };
+
+  // TODO this is mock, make normalization function which take config.softValidators and transform into below type
+  const normalizedSoftValidators: Record<string, ValidatorFn> = {};
 
   return signalStoreFeature(
     withState({ [formName]: formState }),
@@ -186,6 +211,20 @@ export function withNgrxSignalForm<
           const updater = setWarnings(warnings);
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
+
+          if (formState !== updatedFormState) {
+            patchState(store, { [formName]: updatedFormState });
+          }
+        },
+
+        validate: () => {
+          if (!config.validators) {
+            return;
+          }
+
+          const formState = formSignal();
+          const validation = validate(formState, normalizedValidators, normalizedSoftValidators);
+          const updatedFormState = updateRecursive(formState, validation);
 
           if (formState !== updatedFormState) {
             patchState(store, { [formName]: updatedFormState });
