@@ -20,9 +20,6 @@
     "paths": {
       "@ngrx-signal-forms": [
         "libs/ngrx-signal-forms/src/index.ts"
-      ],
-      "@ngrx-signal-forms-flat": [
-        "libs/ngrx-signal-forms-flat/src/index.ts"
       ]
     }
   },
