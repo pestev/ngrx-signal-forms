@@ -5,6 +5,7 @@ export * from './lib/accessors/ngrx-signal-form-accessors.module';
 
 export * from './lib/directives/ngrx-signal-form.directive';
 export * from './lib/directives/ngrx-signal-form-control.directive';
+export * from './lib/directives/ngrx-signal-form-styling.directive';
 
 export * from './lib/types/ngrx-signal-form.types';
 

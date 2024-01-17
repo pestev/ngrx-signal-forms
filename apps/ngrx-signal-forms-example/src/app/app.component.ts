@@ -4,6 +4,7 @@ import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective,
+  NgrxSignalFormStylingDirective,
   required,
   withNgrxSignalForm
 }                                    from '@ngrx-signal-forms';
@@ -52,6 +53,7 @@ const signalExampleStore = signalStore(
     RouterModule,
     NgrxSignalFormDirective,
     NgrxSignalFormControlDirective,
+    NgrxSignalFormStylingDirective,
     NgrxSignalFormAccessorsModule
   ],
   templateUrl: './app.component.html',

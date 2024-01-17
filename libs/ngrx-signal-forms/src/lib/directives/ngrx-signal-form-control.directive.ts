@@ -7,11 +7,20 @@ import {
   NgrxSignalFormControl,
   Primitive
 }                                                                                   from '../types/ngrx-signal-form.types';
+import {
+  NgrxSignalFormStylingDirective
+}                                                                                   from './ngrx-signal-form-styling.directive';
 import { NgrxSignalFormDirective }                                                  from './ngrx-signal-form.directive';
 
 @Directive({
   selector: '[ngrxSignalFormControl]',
-  standalone: true
+  standalone: true,
+  hostDirectives: [
+    {
+      directive: NgrxSignalFormStylingDirective,
+      inputs: [ 'ngrxSignalFormStyling: ngrxSignalFormControl' ]
+    }
+  ]
 })
 export class NgrxSignalFormControlDirective<
   TValue extends Primitive,
@@ -25,7 +34,6 @@ export class NgrxSignalFormControlDirective<
     private form: NgrxSignalFormDirective<TStore>,
     @Self() @Optional() @Inject(NG_VALUE_ACCESSOR) customValueAccessors: ControlValueAccessor[]
   ) {
-
     if (!customValueAccessors.length) {
       throw new Error('Missing control value accessor');
     }
@@ -59,7 +67,7 @@ export class NgrxSignalFormControlDirective<
       }
     });
   }
-  
+
   private changesFromElement(): void {
     this.valueAccessor.registerOnChange((value: TValue) => {
       const formControl = this.formControlSignal();

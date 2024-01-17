@@ -218,7 +218,7 @@ export function withNgrxSignalForm<
         },
 
         validate: () => {
-          if (!config.validators) {
+          if (!normalizedValidators || !normalizedSoftValidators) {
             return;
           }
 

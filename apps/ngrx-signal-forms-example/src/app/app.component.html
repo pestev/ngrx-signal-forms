@@ -11,7 +11,7 @@
     <input [ngrxSignalFormControl]="formSignal.controls.surname()" type="text">
   </label>
 
-  <fieldset>
+  <fieldset [ngrxSignalFormStyling]="formSignal.controls.address()">
     <legend>Address</legend>
 
     <label>
