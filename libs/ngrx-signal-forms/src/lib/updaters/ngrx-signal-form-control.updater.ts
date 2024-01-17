@@ -1,5 +1,10 @@
+import { NgrxSignalFormState }                                                   from '../types/ngrx-signal-form-deduced.types';
 import { BaseControl, NgrxSignalFormGroupControls, NgrxSignalFormStateUpdateFn } from '../types/ngrx-signal-form.types';
-import { isFormGroupControl }                                                    from '../utils/ngrx-signal-form.utils';
+import {
+  updateArrayBasedOnChildren,
+  updateGroupBasedOnChildren
+}                                                                                from '../utils/ngrx-signal-form-update.utils';
+import { isFormArrayControl, isFormGroupControl }                                from '../utils/ngrx-signal-form.utils';
 
 /**
  * Tool for combine updaters into one updater.
@@ -13,10 +18,25 @@ export function updatersPipe(
   ...fns: NgrxSignalFormStateUpdateFn[]
 ): NgrxSignalFormStateUpdateFn {
 
-  return state => fns.reduce(
-    (s, fn) => fn(s),
-    state
-  );
+  return state => {
+    let hasChanged = false;
+
+    const updated = fns.reduce(
+      (s, fn) => {
+        const u = fn(s);
+
+        if (u === s) {
+          return s;
+        }
+
+        hasChanged = true;
+        return u;
+      },
+      state
+    );
+
+    return hasChanged ? updated : state;
+  };
 }
 
 /**
@@ -39,14 +59,18 @@ export function updateRecursive<
       return newState;
     }
 
-    return Object.assign({}, newState, {
-      controls: updatedControls
-    });
+    return updateGroupBasedOnChildren(newState, updatedControls);
   }
 
-  // if (isFormArrayControl(state)) {
-  //   return updateArrayControls(state, updateFn);
-  // }
+  if (isFormArrayControl(state)) {
+    const updatedControls = updateArrayControls(state.controls, updateFn);
+
+    if (updatedControls === state.controls) {
+      return newState;
+    }
+
+    return updateArrayBasedOnChildren(newState, updatedControls);
+  }
 
   return newState;
 }
@@ -71,6 +95,32 @@ function updateGroupControls<
     hasChanged = true;
     return Object.assign(newControls, { [controlKey]: updatedControl });
   }, {}) as TChildrenState;
+
+  return hasChanged ? updatedControls : controls;
+}
+
+function updateArrayControls<
+  TValue,
+  TChildrenState extends NgrxSignalFormState<TValue>[] = NgrxSignalFormState<TValue>[]
+>(
+  controls: TChildrenState,
+  updateFn: NgrxSignalFormStateUpdateFn
+): TChildrenState {
+
+  let hasChanged = false;
+
+  const updatedControls = controls.map(control => {
+
+    const updatedControl =
+      updateRecursive(control, updateFn);
+
+    if (updatedControl === control) {
+      return control;
+    }
+
+    hasChanged = true;
+    return updatedControl;
+  }) as TChildrenState;
 
   return hasChanged ? updatedControls : controls;
 }

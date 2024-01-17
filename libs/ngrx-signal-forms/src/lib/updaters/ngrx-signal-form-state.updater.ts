@@ -1,15 +1,15 @@
-import { NgrxSignalFormState }                                   from '../types/ngrx-signal-form-deduced.types';
+import { NgrxSignalFormState }                                    from '../types/ngrx-signal-form-deduced.types';
 import {
   BaseControl,
-  NgrxControlValue,
   NgrxSignalFormArray,
   NgrxSignalFormControl,
   NgrxSignalFormGroup,
   NgrxSignalFormGroupControls,
   NgrxSignalFormStateUpdateFn,
   Primitive
-}                                                                from '../types/ngrx-signal-form.types';
-import { isFormArrayControl, isFormControl, isFormGroupControl } from '../utils/ngrx-signal-form.utils';
+}                                                                 from '../types/ngrx-signal-form.types';
+import { updateArrayBasedOnChildren, updateGroupBasedOnChildren } from '../utils/ngrx-signal-form-update.utils';
+import { isFormArrayControl, isFormControl, isFormGroupControl }  from '../utils/ngrx-signal-form.utils';
 
 export function ngrxSignalFormStateUpdater<TState extends BaseControl>(
   state: TState,
@@ -89,101 +89,6 @@ function updateArray<TValue, TState extends NgrxSignalFormArray<TValue>>(
   const updated = updateFn(state);
 
   return state === updated ? state : updated;
-}
-
-function updateGroupBasedOnChildren<
-  TValue extends object,
-  TState extends NgrxSignalFormGroup<TValue>,
-  TChildrenState extends NgrxSignalFormGroupControls<TValue>
->(
-  state: TState,
-  updatedControls: TChildrenState
-): TState {
-
-  if (state.controls === updatedControls) {
-    return state;
-  }
-
-  const value: Record<string, unknown> = {};
-  const errors: Record<string, unknown> = {};
-  const warnings: Record<string, unknown> = {};
-  let isDirty = state.isDirty;
-  let isTouched = state.isTouched;
-  let hasErrors = state.hasErrors;
-  let hasWarnings = state.hasWarnings;
-
-  Object.keys(updatedControls).forEach(controlKey => {
-    const control = updatedControls[controlKey as keyof typeof updatedControls];
-
-    value[controlKey] = control.value;
-
-    if (control.isDirty) {
-      isDirty = true;
-    }
-
-    if (control.isTouched) {
-      isTouched = true;
-    }
-
-    if (control.hasErrors) {
-      hasErrors = true;
-      errors[controlKey] = control.errors;
-    }
-
-    if (control.hasWarnings) {
-      hasWarnings = true;
-      warnings[controlKey] = control.warnings;
-    }
-  });
-
-  return Object.assign({}, state, {
-    value,
-    isDirty,
-    isTouched,
-    hasErrors,
-    hasWarnings,
-    errors,
-    warnings,
-    controls: updatedControls
-  });
-}
-
-function updateArrayBasedOnChildren<
-  TValue,
-  TState extends NgrxSignalFormArray<TValue>,
-  TChildrenState extends NgrxSignalFormState<TValue>[] = NgrxSignalFormState<TValue>[]
->(
-  state: TState,
-  updatedControls: TChildrenState
-): TState {
-
-  if (state.controls === updatedControls) {
-    return state;
-  }
-
-  const value: NgrxControlValue[] = [];
-  let isDirty = state.isDirty;
-  let isTouched = state.isTouched;
-
-  updatedControls.forEach(control => {
-
-    value.push(control.value);
-
-    if (control.isDirty) {
-      isDirty = true;
-    }
-
-    if (control.isTouched) {
-      isTouched = true;
-    }
-  });
-
-  return Object.assign({}, state, {
-    value,
-    isDirty,
-    isTouched,
-    controls: updatedControls
-  });
 }
 
 function updateGroupControls<

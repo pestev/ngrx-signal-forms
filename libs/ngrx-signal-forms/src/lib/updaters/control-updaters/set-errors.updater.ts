@@ -5,6 +5,11 @@ export function setErrors(errors: Record<string, unknown>): NgrxSignalFormStateU
 
     const hasErrors = Object.keys(errors).length > 0;
 
+    // TODO maybe compare also when control has errors?
+    if (!state.hasErrors && !hasErrors) {
+      return state;
+    }
+
     return Object.assign({}, state, {
       errors,
       hasErrors
