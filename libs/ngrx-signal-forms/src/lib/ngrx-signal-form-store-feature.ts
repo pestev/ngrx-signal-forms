@@ -55,8 +55,8 @@ import {
   ValidatorFn
 }                           from './validation/ngrx-signal-form-validation.types';
 import {
-  required
-}                           from './validation/validators/required.validator';
+  normalizeValidators
+}                           from './validation/ngrx-signal-form-validation.utils';
 
 export type NgrxSignalFormStoreFeatureMethods = {
   updateValue(controlId: string, value: NgrxControlValue): void;
@@ -127,16 +127,8 @@ export function withNgrxSignalForm<
 
   const { formName, formValue } = config;
   const formState = creator(formName, formValue);
-
-  // TODO this is mock, make normalization function which take config.validators and transform into below type
-  const normalizedValidators: Record<string, ValidatorFn> = {
-    [`${ formName }.name`]: required,
-    [`${ formName }.address.city`]: required,
-    [`${ formName }.items.itemName`]: required
-  };
-
-  // TODO this is mock, make normalization function which take config.softValidators and transform into below type
-  const normalizedSoftValidators: Record<string, ValidatorFn> = {};
+  const normalizedValidators: Record<string, ValidatorFn> = normalizeValidators(formName, config.validators);
+  const normalizedSoftValidators: Record<string, ValidatorFn> = normalizeValidators(formName, config.softValidators);
 
   return signalStoreFeature(
     withState({ [formName]: formState }),
