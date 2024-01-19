@@ -17,20 +17,22 @@
     <input [ngrxSignalFormControl]="formSignal.controls.age()" type="number">
   </label>
 
-  <!--  <label>-->
-  <!--    Male-->
-  <!--    <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio">-->
-  <!--  </label>-->
-  <!--  <label>-->
-  <!--    Female-->
-  <!--    <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio">-->
-  <!--  </label>-->
-
   <label>
     Some checkbox:
 
     <input [ngrxSignalFormControl]="formSignal.controls.someCheckbox()" type="checkbox">
   </label>
+
+  <div>
+    <label>
+      Male
+      <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio" value="male">
+    </label>
+    <label>
+      Female
+      <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio" value="female">
+    </label>
+  </div>
 
   <fieldset [ngrxSignalFormStyling]="formSignal.controls.address()">
     <legend>Address</legend>

@@ -32,13 +32,13 @@ export class NgrxSignalFormControlDirective<
 
   constructor(
     private form: NgrxSignalFormDirective<TStore>,
-    @Self() @Optional() @Inject(NG_VALUE_ACCESSOR) customValueAccessors: ControlValueAccessor[]
+    @Self() @Optional() @Inject(NG_VALUE_ACCESSOR) valueAccessors: ControlValueAccessor[]
   ) {
-    if (!customValueAccessors.length) {
+    if (!valueAccessors.length) {
       throw new Error('Missing control value accessor');
     }
 
-    this.valueAccessor = customValueAccessors[0];
+    this.valueAccessor = valueAccessors[0];
 
     this.writeToElement();
     this.changeDisabled();
