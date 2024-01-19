@@ -3,7 +3,7 @@ import { DefaultValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: 'input[ngrxSignalFormControl], textarea[ngrxSignalFormControl]',
+  selector: 'input:not([type=checkbox])[ngrxSignalFormControl],textarea[ngrxSignalFormControl]',
   standalone: true,
   providers: [
     {

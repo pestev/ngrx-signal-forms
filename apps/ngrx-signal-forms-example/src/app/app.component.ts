@@ -15,9 +15,13 @@ const FORM_NAME = 'exampleForm';
 const state = {
   name: 'MyFirstName',
   surname: 'MySecondName',
+  sex: 'male' as 'male' | 'female',
+  age: 18,
+  someCheckbox: true,
   address: {
     street: 'My street',
-    city: 'My city'
+    city: 'My city',
+    country: 'SR' as 'SR' | 'CZ' | 'DE' | 'PL' | 'HU' | 'UK' | 'US'
   },
   items: [
     {
@@ -42,6 +46,7 @@ const signalExampleStore = signalStore(
     //@ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
     validators: {
       name: required,
+      someCheckbox: required,
       address: {
         city: required
       },

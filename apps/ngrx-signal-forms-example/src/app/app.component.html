@@ -11,6 +11,27 @@
     <input [ngrxSignalFormControl]="formSignal.controls.surname()" type="text">
   </label>
 
+  <label>
+    Age:
+
+    <input [ngrxSignalFormControl]="formSignal.controls.age()" type="number">
+  </label>
+
+  <!--  <label>-->
+  <!--    Male-->
+  <!--    <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio">-->
+  <!--  </label>-->
+  <!--  <label>-->
+  <!--    Female-->
+  <!--    <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio">-->
+  <!--  </label>-->
+
+  <label>
+    Some checkbox:
+
+    <input [ngrxSignalFormControl]="formSignal.controls.someCheckbox()" type="checkbox">
+  </label>
+
   <fieldset [ngrxSignalFormStyling]="formSignal.controls.address()">
     <legend>Address</legend>
 
@@ -24,6 +45,20 @@
       City:
 
       <input [ngrxSignalFormControl]="formSignal.controls.address.controls.city()" type="text">
+    </label>
+
+    <label>
+      Country:
+
+      <select [ngrxSignalFormControl]="formSignal.controls.address.controls.country()">
+        <option value="CZ">CZ</option>
+        <option value="DE">DE</option>
+        <option value="HU">HU</option>
+        <option value="PL">PL</option>
+        <option value="SR">SR</option>
+        <option value="UK">UK</option>
+        <option value="US">US</option>
+      </select>
     </label>
   </fieldset>
 
