@@ -8,25 +8,19 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/ngrx-signal-forms-example",
         "index": "apps/ngrx-signal-forms-example/src/index.html",
         "browser": "apps/ngrx-signal-forms-example/src/main.ts",
-        "polyfills": [
-          "zone.js"
-        ],
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/ngrx-signal-forms-example/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/ngrx-signal-forms-example/src/favicon.ico",
           "apps/ngrx-signal-forms-example/src/assets"
         ],
-        "styles": [
-          "apps/ngrx-signal-forms-example/src/styles.scss"
-        ],
+        "styles": ["apps/ngrx-signal-forms-example/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -73,21 +67,11 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
-      "options": {
-        "lintFilePatterns": [
-          "apps/ngrx-signal-forms-example/**/*.ts",
-          "apps/ngrx-signal-forms-example/**/*.html"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/ngrx-signal-forms-example/jest.config.ts"
       }

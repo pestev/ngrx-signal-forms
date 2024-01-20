@@ -1,5 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { RouterModule }              from '@angular/router';
+import { ExampleInvoiceComponent }   from '@example';
 import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
@@ -42,7 +43,7 @@ const signalExampleStore = signalStore(
   withNgrxSignalForm({
     formName: FORM_NAME,
     formValue: state,
-    // TODO somehow remove typescript error
+    // TODO somehow remove typescript error.
     //@ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
     validators: {
       name: required,
@@ -65,7 +66,8 @@ const signalExampleStore = signalStore(
     NgrxSignalFormDirective,
     NgrxSignalFormControlDirective,
     NgrxSignalFormStylingDirective,
-    NgrxSignalFormAccessorsModule
+    NgrxSignalFormAccessorsModule,
+    ExampleInvoiceComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: [ './app.component.scss' ],

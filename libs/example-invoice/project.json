@@ -1,8 +1,8 @@
 {
-  "name": "ngrx-signal-forms",
+  "name": "example-invoice",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/ngrx-signal-forms/src",
-  "prefix": "ngrx",
+  "sourceRoot": "libs/example-invoice/src",
+  "prefix": "s-f",
   "tags": [],
   "projectType": "library",
   "targets": {
@@ -10,14 +10,14 @@
       "executor": "@nx/angular:ng-packagr-lite",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/ngrx-signal-forms/ng-package.json"
+        "project": "libs/example-invoice/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/ngrx-signal-forms/tsconfig.lib.prod.json"
+          "tsConfig": "libs/example-invoice/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/ngrx-signal-forms/tsconfig.lib.json"
+          "tsConfig": "libs/example-invoice/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -26,7 +26,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/ngrx-signal-forms/jest.config.ts"
+        "jestConfig": "libs/example-invoice/jest.config.ts"
       }
     },
     "lint": {

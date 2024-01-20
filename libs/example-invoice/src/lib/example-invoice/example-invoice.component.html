@@ -1,0 +1,65 @@
+<form [ngrxSignalForm]="store">
+  <h3>Invoice number: <input [ngrxSignalFormControl]="formSignal.controls.id()" type="text" /></h3>
+
+  <s-f-example-card class="common-info">
+    <s-f-example-company [companyFormState]="formSignal.controls.company()" title="Company"></s-f-example-company>
+
+    <s-f-example-company [companyFormState]="formSignal.controls.client()" title="Client"></s-f-example-company>
+
+    <div class="more-common-info">
+      <label>
+        Due date:
+
+        <input [ngrxSignalFormControl]="formSignal.controls.dueDate()" type="text">
+      </label>
+
+      <label>
+        Include VAT:
+
+        <input [ngrxSignalFormControl]="formSignal.controls.inclVat()" type="checkbox">
+      </label>
+    </div>
+  </s-f-example-card>
+
+  <s-f-example-card class="invoice-items">
+    <table>
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Total Price</th>
+        @if (formSignal.value.inclVat()) {
+          <th>VAT</th>
+        }
+        <th>Total Price With VAT</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (itemState of formSignal.controls.items.controls(); track itemState.value.id; let index = $index) {
+          <tr>
+            <td>{{ index + 1 }}.</td>
+            <td>{{ itemState.value.id }}</td>
+            <td><input [ngrxSignalFormControl]="itemState.controls.name" type="text"></td>
+            <td><input [ngrxSignalFormControl]="itemState.controls.quantity" type="number"></td>
+            <td><input [ngrxSignalFormControl]="itemState.controls.unitPrice" type="number"></td>
+            <td><input [ngrxSignalFormControl]="itemState.controls.totalPrice" type="number"></td>
+            @if (formSignal.value.inclVat()) {
+              <td><input [ngrxSignalFormControl]="itemState.controls.vat" type="number"></td>
+            }
+            <td><input [ngrxSignalFormControl]="itemState.controls.totalPriceWithVat" type="number"></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </s-f-example-card>
+</form>
+
+<pre>
+  <code>
+    {{ this.store.formValueAsFormattedJSON() }}
+  </code>
+</pre>

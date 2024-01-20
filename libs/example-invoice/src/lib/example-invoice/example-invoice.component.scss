@@ -1,0 +1,26 @@
+.common-info {
+  display: flex;
+
+  > * {
+    margin: 0 0.5rem;
+  }
+
+  > .more-common-info {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem 0;
+  }
+}
+
+.invoice-items {
+  padding: 1rem;
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  input {
+    width: 95%;
+  }
+}

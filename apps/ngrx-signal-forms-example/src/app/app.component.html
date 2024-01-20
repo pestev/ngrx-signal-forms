@@ -1,116 +1,118 @@
-<form [ngrxSignalForm]="store">
-  <label>
-    Name:
+<s-f-example-invoice></s-f-example-invoice>
 
-    <input [ngrxSignalFormControl]="formSignal.controls.name()" type="text">
-  </label>
+<!--<form [ngrxSignalForm]="store">-->
+<!--  <label>-->
+<!--    Name:-->
 
-  <label>
-    Surname:
+<!--    <input [ngrxSignalFormControl]="formSignal.controls.name()" type="text">-->
+<!--  </label>-->
 
-    <input [ngrxSignalFormControl]="formSignal.controls.surname()" type="text">
-  </label>
+<!--  <label>-->
+<!--    Surname:-->
 
-  <label>
-    Age:
+<!--    <input [ngrxSignalFormControl]="formSignal.controls.surname()" type="text">-->
+<!--  </label>-->
 
-    <input [ngrxSignalFormControl]="formSignal.controls.age()" type="number">
-  </label>
+<!--  <label>-->
+<!--    Age:-->
 
-  <label>
-    Some checkbox:
+<!--    <input [ngrxSignalFormControl]="formSignal.controls.age()" type="number">-->
+<!--  </label>-->
 
-    <input [ngrxSignalFormControl]="formSignal.controls.someCheckbox()" type="checkbox">
-  </label>
+<!--  <label>-->
+<!--    Some checkbox:-->
 
-  <div>
-    <label>
-      Male
-      <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio" value="male">
-    </label>
-    <label>
-      Female
-      <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio" value="female">
-    </label>
-  </div>
+<!--    <input [ngrxSignalFormControl]="formSignal.controls.someCheckbox()" type="checkbox">-->
+<!--  </label>-->
 
-  <fieldset [ngrxSignalFormStyling]="formSignal.controls.address()">
-    <legend>Address</legend>
+<!--  <div>-->
+<!--    <label>-->
+<!--      Male-->
+<!--      <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio" value="male">-->
+<!--    </label>-->
+<!--    <label>-->
+<!--      Female-->
+<!--      <input [ngrxSignalFormControl]="formSignal.controls.sex()" name="sex" type="radio" value="female">-->
+<!--    </label>-->
+<!--  </div>-->
 
-    <label>
-      Street:
+<!--  <fieldset [ngrxSignalFormStyling]="formSignal.controls.address()">-->
+<!--    <legend>Address</legend>-->
 
-      <input [ngrxSignalFormControl]="formSignal.controls.address.controls.street()" type="text">
-    </label>
+<!--    <label>-->
+<!--      Street:-->
 
-    <label>
-      City:
+<!--      <input [ngrxSignalFormControl]="formSignal.controls.address.controls.street()" type="text">-->
+<!--    </label>-->
 
-      <input [ngrxSignalFormControl]="formSignal.controls.address.controls.city()" type="text">
-    </label>
+<!--    <label>-->
+<!--      City:-->
 
-    <label>
-      Country:
+<!--      <input [ngrxSignalFormControl]="formSignal.controls.address.controls.city()" type="text">-->
+<!--    </label>-->
 
-      <select [ngrxSignalFormControl]="formSignal.controls.address.controls.country()">
-        <option value="CZ">CZ</option>
-        <option value="DE">DE</option>
-        <option value="HU">HU</option>
-        <option value="PL">PL</option>
-        <option value="SR">SR</option>
-        <option value="UK">UK</option>
-        <option value="US">US</option>
-      </select>
-    </label>
-  </fieldset>
+<!--    <label>-->
+<!--      Country:-->
 
-  <fieldset>
-    <legend>Items</legend>
+<!--      <select [ngrxSignalFormControl]="formSignal.controls.address.controls.country()">-->
+<!--        <option value="CZ">CZ</option>-->
+<!--        <option value="DE">DE</option>-->
+<!--        <option value="HU">HU</option>-->
+<!--        <option value="PL">PL</option>-->
+<!--        <option value="SR">SR</option>-->
+<!--        <option value="UK">UK</option>-->
+<!--        <option value="US">US</option>-->
+<!--      </select>-->
+<!--    </label>-->
+<!--  </fieldset>-->
 
-    @for (itemState of formSignal.controls.items.controls(); track itemState.value.itemId; let index = $index) {
-      <div>
-        <span class="item-index">{{ index + 1 }}.</span>
+<!--  <fieldset>-->
+<!--    <legend>Items</legend>-->
 
-        <span class="item-id">Item Id: {{ itemState.value.itemId }}</span>
+<!--    @for (itemState of formSignal.controls.items.controls(); track itemState.value.itemId; let index = $index) {-->
+<!--      <div>-->
+<!--        <span class="item-index">{{ index + 1 }}.</span>-->
 
-        <label>
-          Item name:
+<!--        <span class="item-id">Item Id: {{ itemState.value.itemId }}</span>-->
 
-          <input [ngrxSignalFormControl]="itemState.controls.itemName" type="text">
-        </label>
-      </div>
-    }
-  </fieldset>
-</form>
+<!--        <label>-->
+<!--          Item name:-->
 
-<hr />
+<!--          <input [ngrxSignalFormControl]="itemState.controls.itemName" type="text">-->
+<!--        </label>-->
+<!--      </div>-->
+<!--    }-->
+<!--  </fieldset>-->
+<!--</form>-->
 
-<fieldset>
-  <legend>Simulate external changes</legend>
+<!--<hr />-->
 
-  <div>
-    <button (click)="reloadForm()" type="button">Reload form</button>
+<!--<fieldset>-->
+<!--  <legend>Simulate external changes</legend>-->
 
-    <button (click)="updateAddress()" type="button">Change address</button>
+<!--  <div>-->
+<!--    <button (click)="reloadForm()" type="button">Reload form</button>-->
 
-    <button (click)="updateItem()" type="button">Change first item</button>
-  </div>
+<!--    <button (click)="updateAddress()" type="button">Change address</button>-->
 
-  <div>
-    <button (click)="disableAddress()" type="button">Disable address</button>
-  </div>
+<!--    <button (click)="updateItem()" type="button">Change first item</button>-->
+<!--  </div>-->
 
-  <div>
-    <button (click)="nameError()" type="button">Name error</button>
+<!--  <div>-->
+<!--    <button (click)="disableAddress()" type="button">Disable address</button>-->
+<!--  </div>-->
 
-    <button (click)="streetWarning()" type="button">Street warning</button>
+<!--  <div>-->
+<!--    <button (click)="nameError()" type="button">Name error</button>-->
 
-    <button (click)="validate()" type="button">Validate</button>
-  </div>
-</fieldset>
+<!--    <button (click)="streetWarning()" type="button">Street warning</button>-->
 
-<pre>
-  <code>
-    {{ this.store.formValueAsFormattedJSON() }}
-  </code>
-</pre>
+<!--    <button (click)="validate()" type="button">Validate</button>-->
+<!--  </div>-->
+<!--</fieldset>-->
+
+<!--<pre>-->
+<!--  <code>-->
+<!--    {{ this.store.formValueAsFormattedJSON() }}-->
+<!--  </code>-->
+<!--</pre>-->

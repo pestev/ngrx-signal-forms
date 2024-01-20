@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  border: #b0b0b0 1px solid;
+  border-radius: 3px;
+  padding: 0.3rem;
+  box-shadow: 2px 2px 5px #b0b0b0;
+  margin-bottom: 7px;
+
+  ::ng-deep {
+    input {
+      border-color: #b0b0b0;
+      border-radius: 3px;
+    }
+  }
+}

@@ -1,0 +1,25 @@
+<label>
+  Street:
+
+  <input [ngrxSignalFormControl]="addressFormState.controls.street" type="text">
+</label>
+
+<label>
+  City:
+
+  <input [ngrxSignalFormControl]="addressFormState.controls.city" type="text">
+</label>
+
+<label>
+  Country:
+
+  <select [ngrxSignalFormControl]="addressFormState.controls.country">
+    <option value="CZ">CZ</option>
+    <option value="DE">DE</option>
+    <option value="HU">HU</option>
+    <option value="PL">PL</option>
+    <option value="SR">SR</option>
+    <option value="UK">UK</option>
+    <option value="US">US</option>
+  </select>
+</label>
