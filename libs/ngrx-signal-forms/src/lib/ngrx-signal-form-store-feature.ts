@@ -4,9 +4,18 @@ import {
   SignalStoreFeature,
   signalStoreFeature,
   withComputed,
+  withHooks,
   withMethods,
   withState
 }                           from '@ngrx/signals';
+import {
+  rxMethod
+}                           from '@ngrx/signals/rxjs-interop';
+import {
+  distinctUntilChanged,
+  pipe,
+  tap
+}                           from 'rxjs';
 import {
   NgrxSignalFormState
 }                           from './types/ngrx-signal-form-deduced.types';
@@ -67,11 +76,6 @@ export type NgrxSignalFormStoreFeatureMethods = {
   validate(): void;
 }
 
-export type NgrxSignalFormFeatureState<
-  TFormName extends string,
-  TFormValue extends NgrxControlValue
-> = { [K in TFormName as `${ K }`]: NgrxSignalFormState<TFormValue> };
-
 /**
  * Creates a SignalStoreFeature with NgrxSignalForm.
  * Function overload for type safety, so consuming store will correctly recognize, what this feature add to the store
@@ -88,7 +92,8 @@ export function withNgrxSignalForm<
 >(config: {
   formName: TFormName,
   formValue: TFormValue,
-  validators?: ValidatorConfig<TFormValue>
+  validators?: ValidatorConfig<TFormValue>,
+  softValidators?: ValidatorConfig<TFormValue>
 }): SignalStoreFeature<
   {
     state: object,
@@ -96,10 +101,10 @@ export function withNgrxSignalForm<
     methods: {} // eslint-disable-line @typescript-eslint/ban-types
   },
   {
-    state: NgrxSignalFormFeatureState<TFormName, TFormValue>,
+    state: { formState: NgrxSignalFormState<TFormValue> },
     signals: {
-      formValueAsJSON: Signal<string>,
-      formValueAsFormattedJSON: Signal<string>,
+      formStateAsJSON: Signal<string>,
+      formStateAsFormattedJSON: Signal<string>,
     },
     methods: NgrxSignalFormStoreFeatureMethods & {
       reset(v: TFormValue): void;
@@ -125,87 +130,85 @@ export function withNgrxSignalForm<
   softValidators?: ValidatorConfig<TFormValue>
 }): SignalStoreFeature {
 
-  const { formName, formValue } = config;
+  const { formName, formValue, validators, softValidators } = config;
   const formState = creator(formName, formValue);
-  const normalizedValidators: Record<string, ValidatorFn> = normalizeValidators(formName, config.validators);
-  const normalizedSoftValidators: Record<string, ValidatorFn> = normalizeValidators(formName, config.softValidators);
+  const normalizedValidators: Record<string, ValidatorFn> = normalizeValidators(formName, validators);
+  const normalizedSoftValidators: Record<string, ValidatorFn> = normalizeValidators(formName, softValidators);
 
   return signalStoreFeature(
-    withState({ [formName]: formState }),
+    withState({ formState: formState }),
 
     withComputed(store => {
-      const formSignal =
-        (store as Record<string, Signal<unknown>>)[formName] as Signal<NgrxSignalFormState<TFormValue>>;
 
       return {
-        formValueAsJSON: computed(() => JSON.stringify(formSignal(), null, 4)),
+        formValue: computed(() => store.formState().value as TFormValue),
 
-        formValueAsFormattedJSON: computed(() => JSON.stringify(formSignal(), null, 4))
+        formStateAsJSON: computed(() => JSON.stringify(store.formState(), null, 4)),
+
+        formStateAsFormattedJSON: computed(() => JSON.stringify(store.formState(), null, 4))
       };
     }),
 
     withMethods(store => {
-      const formSignal =
-        (store as Record<string, Signal<unknown>>)[formName] as Signal<NgrxSignalFormState<TFormValue>>;
 
       return {
         reset: (value: TFormValue): void => {
-          patchState(store, { [formName]: creator(formName, value) });
+          patchState(store, { formState: creator(formName, value) });
         },
 
         // TODO try to type value, based on controlId
         updateValue: (controlId: string, value: unknown): void => {
-          const formState = formSignal();
+          const formState = store.formState();
           const updater = updatersPipe(setValue(value), markAsDirty);
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
           if (formState !== updatedFormState) {
-            patchState(store, { [formName]: updatedFormState });
+            patchState(store, { formState: updatedFormState });
           }
         },
 
         updateTouched: (controlId: string, isTouched: boolean): void => {
-          const formState = formSignal();
+          const formState = store.formState();
           const updater = isTouched ? markAsTouched : markAsUntouched;
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
           if (formState !== updatedFormState) {
-            patchState(store, { [formName]: updatedFormState });
+            patchState(store, { formState: updatedFormState });
           }
         },
 
         updateDisabled: (controlId: string, isDisabled: boolean): void => {
-          const formState = formSignal();
+          const formState = store.formState();
           const updater = isDisabled ? markAsDisabled : markAsEnabled;
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
           if (formState !== updatedFormState) {
-            patchState(store, { [formName]: updatedFormState });
+            patchState(store, { formState: updatedFormState });
           }
         },
 
         updateErrors: (controlId: string, errors: Record<string, unknown>): void => {
-          const formState = formSignal();
+          const formState = store.formState();
           const updater = setErrors(errors);
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
           if (formState !== updatedFormState) {
-            patchState(store, { [formName]: updatedFormState });
+            patchState(store, { formState: updatedFormState });
           }
         },
 
         updateWarnings: (controlId: string, warnings: Record<string, unknown>): void => {
-          const formState = formSignal();
+          const formState = store.formState();
           const updater = setWarnings(warnings);
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
           if (formState !== updatedFormState) {
-            patchState(store, { [formName]: updatedFormState });
+            patchState(store, { formState: updatedFormState });
           }
         },
 
@@ -214,16 +217,34 @@ export function withNgrxSignalForm<
             return;
           }
 
-          const formState = formSignal();
+          const formState = store.formState();
           const validation = validate(formState, normalizedValidators, normalizedSoftValidators);
           const updatedFormState = updateRecursive(formState, validation);
 
           if (formState !== updatedFormState) {
-            patchState(store, { [formName]: updatedFormState });
+            patchState(store, { formState: updatedFormState });
           }
         }
       };
+    }),
 
+    withMethods(store => {
+      return {
+        validateOnValueChange: rxMethod<NgrxControlValue>(
+          pipe(
+            distinctUntilChanged((p, c) => {
+              console.debug('distinct: ', p === c, p, c);
+              return p === c;
+            }),
+            tap(() => store.validate())
+          ))
+      };
+    }),
+
+    withHooks({
+      onInit({ validateOnValueChange, formValue }) {
+        validateOnValueChange(formValue);
+      }
     })
   );
 }

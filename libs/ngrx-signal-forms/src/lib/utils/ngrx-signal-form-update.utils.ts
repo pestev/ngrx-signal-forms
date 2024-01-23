@@ -1,5 +1,11 @@
-import { NgrxSignalFormState }                                        from '../types/ngrx-signal-form-deduced.types';
-import { BaseControl, NgrxControlValue, NgrxSignalFormGroupControls } from '../types/ngrx-signal-form.types';
+import { NgrxSignalFormState } from '../types/ngrx-signal-form-deduced.types';
+import {
+  BaseControl,
+  NgrxControlValue,
+  NgrxSignalFormArray,
+  NgrxSignalFormGroup,
+  NgrxSignalFormGroupControls
+}                              from '../types/ngrx-signal-form.types';
 
 export function updateGroupBasedOnChildren<
   TValue extends object,
@@ -14,6 +20,8 @@ export function updateGroupBasedOnChildren<
     return state;
   }
 
+  let hasValueChanged = false;
+
   const value: Record<string, unknown> = {};
   const errors: Record<string, unknown> = {};
   const warnings: Record<string, unknown> = {};
@@ -23,8 +31,14 @@ export function updateGroupBasedOnChildren<
   let hasWarnings = state.hasWarnings;
 
   Object.keys(updatedControls).forEach(controlKey => {
-    const control = updatedControls[controlKey as keyof typeof updatedControls];
+    const prevControl: BaseControl =
+      (state as NgrxSignalFormGroup<TValue>).controls[controlKey as keyof typeof state.controls];
+    const control =
+      updatedControls[controlKey as keyof typeof updatedControls];
 
+    if (prevControl.value !== control.value) {
+      hasValueChanged = true;
+    }
     value[controlKey] = control.value;
 
     if (control.isDirty) {
@@ -47,7 +61,7 @@ export function updateGroupBasedOnChildren<
   });
 
   return Object.assign({}, state, {
-    value,
+    value: hasValueChanged ? value : state.value,
     isDirty,
     isTouched,
     hasErrors,
@@ -71,6 +85,8 @@ export function updateArrayBasedOnChildren<
     return state;
   }
 
+  let hasValueChanged = false;
+
   const value: NgrxControlValue[] = [];
   const errors: Record<string, unknown> = {};
   const warnings: Record<string, unknown> = {};
@@ -81,6 +97,11 @@ export function updateArrayBasedOnChildren<
 
   updatedControls.forEach((control, key) => {
 
+    const prevControl: BaseControl = (state as NgrxSignalFormArray<TValue>).controls[key];
+
+    if (prevControl.value !== control.value) {
+      hasValueChanged = true;
+    }
     value.push(control.value);
 
     if (control.isDirty) {
@@ -103,7 +124,7 @@ export function updateArrayBasedOnChildren<
   });
 
   return Object.assign({}, state, {
-    value,
+    value: hasValueChanged ? value : state.value,
     isDirty,
     isTouched,
     hasErrors,

@@ -1,24 +1,26 @@
-import { CommonModule }                               from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ExampleCardComponent }                       from '@example/ui';
+import { CommonModule }                                       from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ExampleCardComponent }                               from '@example/ui';
 import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective,
   required,
   withNgrxSignalForm
-}                                                     from '@ngrx-signal-forms';
-import { signalStore }                                from '@ngrx/signals';
-import { ExampleCompany, ExampleItem }                from '../types/example.types';
-import { ExampleAddressComponent }                    from './example-address/example-address.component';
-import { ExampleCompanyComponent }                    from './example-company/example-company.component';
+}                                                             from '@ngrx-signal-forms';
+import { signalStore }                                        from '@ngrx/signals';
+import { ExampleCompany, ExampleItem }                        from '../types/example.types';
+import { ExampleAddressComponent }                            from './example-address/example-address.component';
+import { ExampleCompanyComponent }                            from './example-company/example-company.component';
 
 interface ExampleInvoice {
-  id: string;
+  id: number;
+  invoiceNumber: string;
   company: ExampleCompany;
   client: ExampleCompany;
   dueDate: string;
   inclVat: boolean;
+  totalPriceInclVat: number;
   items: ExampleItem[];
 }
 
@@ -37,7 +39,8 @@ function generateItems(length: number): ExampleItem[] {
 const FORM_NAME = 'exampleInvoiceForm';
 
 const state: ExampleInvoice = {
-  id: 'I2024003',
+  id: 1,
+  invoiceNumber: 'I2024003',
   company: {
     name: 'My company',
     address: {
@@ -56,7 +59,8 @@ const state: ExampleInvoice = {
   },
   dueDate: '2024-13-1',
   inclVat: false,
-  items: generateItems(100)
+  totalPriceInclVat: 5 * 12,
+  items: generateItems(5)
 };
 
 const signalExampleInvoiceStore = signalStore(
@@ -66,6 +70,7 @@ const signalExampleInvoiceStore = signalStore(
     // TODO somehow remove typescript error
     //@ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
     validators: {
+      invoiceNumber: required,
       items: {
         name: required
       }
@@ -96,6 +101,12 @@ export class ExampleInvoiceComponent {
 
   protected readonly store = inject(signalExampleInvoiceStore);
 
-  protected readonly formSignal = this.store.exampleInvoiceForm;
+  protected readonly formSignal = this.store.formState;
+
+  constructor() {
+    effect(() => {
+      console.debug('formState: ', this.formSignal());
+    });
+  }
 
 }

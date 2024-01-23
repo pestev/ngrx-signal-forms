@@ -62,9 +62,11 @@ function generateGroupControls<
   vIdBase: string | null
 ): NgrxSignalFormGroup<T>['controls'] {
 
+  const idPrefix = idBase ? `${ idBase }.` : '';
+
   const r = Object.entries(value).map(([ k, v ]) => [
     k,
-    creator(`${ idBase }.${ k }`, v, `${ vIdBase || idBase }.${ k }`)
+    creator(`${ idPrefix }${ k }`, v, `${ vIdBase || idBase }.${ k }`)
   ]);
 
   return Object.fromEntries(r);
@@ -101,7 +103,9 @@ function generateArrayControls<
   vIdBase: string | null
 ): NgrxSignalFormArray<TValue>['controls'] {
 
-  return value.map((v, i) => creator(`${ idBase }.${ i }`, v, vIdBase));
+  const idPrefix = idBase ? `${ idBase }.` : '';
+
+  return value.map((v, i) => creator(`${ idPrefix }${ i }`, v, vIdBase));
 }
 
 function generateControl<

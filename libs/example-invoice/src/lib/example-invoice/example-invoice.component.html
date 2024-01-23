@@ -1,5 +1,5 @@
 <form [ngrxSignalForm]="store">
-  <h3>Invoice number: <input [ngrxSignalFormControl]="formSignal.controls.id()" type="text" /></h3>
+  <h3>Invoice number: <input [ngrxSignalFormControl]="formSignal.controls.invoiceNumber()" type="text" /></h3>
 
   <s-f-example-card class="common-info">
     <s-f-example-company [companyFormState]="formSignal.controls.company()" title="Company"></s-f-example-company>
@@ -17,6 +17,12 @@
         Include VAT:
 
         <input [ngrxSignalFormControl]="formSignal.controls.inclVat()" type="checkbox">
+      </label>
+
+      <label>
+        Total price with VAT:
+
+        <input [ngrxSignalFormControl]="formSignal.controls.totalPriceInclVat()" type="number">
       </label>
     </div>
   </s-f-example-card>
@@ -60,6 +66,6 @@
 
 <pre>
   <code>
-    {{ this.store.formValueAsFormattedJSON() }}
+    {{ this.store.formStateAsFormattedJSON() }}
   </code>
 </pre>
