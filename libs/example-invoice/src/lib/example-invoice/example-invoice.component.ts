@@ -70,10 +70,12 @@ const signalExampleInvoiceStore = signalStore(
     // TODO somehow remove typescript error
     //@ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
     validators: {
-      invoiceNumber: required,
       items: {
         name: required
       }
+    },
+    softValidators: {
+      invoiceNumber: required
     }
   })
 );

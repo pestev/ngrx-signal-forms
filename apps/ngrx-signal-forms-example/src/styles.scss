@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+input.s-f-touched,
+textarea.s-f-touched,
+select.s-f-touched {
+  &.s-f-invalid {
+    border-color: red;
+  }
+}
+
+input.s-f-touched,
+textarea.s-f-touched,
+select.s-f-touched {
+  &.s-f-soft-invalid {
+    border-color: #ffbc3a;
+  }
+}
