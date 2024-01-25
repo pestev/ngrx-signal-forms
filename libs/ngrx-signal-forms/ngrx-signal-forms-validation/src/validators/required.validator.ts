@@ -1,6 +1,6 @@
-import { BaseControl } from '../../types/ngrx-signal-form.types';
-import { isObject }    from '../../utils/utils';
-import { ValidatorFn } from '../ngrx-signal-form-validation.types';
+import { BaseControl } from '../../../src/lib/types/ngrx-signal-form.types';
+import { isObject }    from '../../../src/lib/utils/utils';
+import { ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 
 export const required: ValidatorFn = (controlState: BaseControl) => {
   return isEmpty(controlState.value) ? {

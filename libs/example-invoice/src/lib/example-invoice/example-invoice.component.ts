@@ -5,9 +5,9 @@ import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective,
-  required,
   withNgrxSignalForm
 }                                                             from '@ngrx-signal-forms';
+import { max, min, required, withNgrxSignalFormValidation }   from '@ngrx-signal-forms/validation';
 import { signalStore }                                        from '@ngrx/signals';
 import { ExampleCompany, ExampleItem }                        from '../types/example.types';
 import { ExampleAddressComponent }                            from './example-address/example-address.component';
@@ -38,7 +38,7 @@ function generateItems(length: number): ExampleItem[] {
 
 const FORM_NAME = 'exampleInvoiceForm';
 
-const state: ExampleInvoice = {
+const value: ExampleInvoice = {
   id: 1,
   invoiceNumber: 'I2024003',
   company: {
@@ -66,12 +66,18 @@ const state: ExampleInvoice = {
 const signalExampleInvoiceStore = signalStore(
   withNgrxSignalForm({
     formName: FORM_NAME,
-    formValue: state,
+    formValue: value
+  }),
+  withNgrxSignalFormValidation({
+    formName: FORM_NAME,
+    formValue: value,
     // TODO somehow remove typescript error
-    //@ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
+    //@ ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
     validators: {
       items: {
-        name: required
+        name: required,
+        quantity: min(1),
+        vat: max(20)
       }
     },
     softValidators: {

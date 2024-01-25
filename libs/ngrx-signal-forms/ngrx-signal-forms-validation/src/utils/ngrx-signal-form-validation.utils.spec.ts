@@ -1,4 +1,4 @@
-import { ValidatorConfig, ValidatorFn } from './ngrx-signal-form-validation.types';
+import { ValidatorConfig, ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 import { normalizeValidators }          from './ngrx-signal-form-validation.utils';
 
 const emptyValidator: ValidatorFn = () => ({});

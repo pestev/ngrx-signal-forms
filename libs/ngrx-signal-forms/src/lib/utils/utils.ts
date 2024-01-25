@@ -13,3 +13,10 @@ export function isPrimitive(v: unknown): v is Primitive {
 export function arrayEquals(a: Array<unknown>, b: Array<unknown>): boolean {
   return a.length === b.length && a.every((e, index) => e === b[index]);
 }
+
+export function hasValidLength<TValue extends { length?: unknown }>(
+  value: TValue
+): value is TValue & { length: number } {
+
+  return value != null && typeof value.length === 'number';
+}

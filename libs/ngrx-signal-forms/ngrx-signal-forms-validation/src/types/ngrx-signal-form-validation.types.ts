@@ -1,4 +1,4 @@
-import { BaseControl, Primitive } from '../types/ngrx-signal-form.types';
+import { BaseControl, Primitive } from '../../../src/lib/types/ngrx-signal-form.types';
 
 export type ValidatorFn = <TFormState>(
   controlState: BaseControl,

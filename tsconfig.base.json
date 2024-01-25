@@ -10,15 +10,30 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2022", "dom"],
+    "lib": [
+      "es2022",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@example": ["libs/example-invoice/src/index.ts"],
-      "@example/ui": ["libs/example-ui/src/index.ts"],
-      "@ngrx-signal-forms": ["libs/ngrx-signal-forms/src/index.ts"]
+      "@example": [
+        "libs/example-invoice/src/index.ts"
+      ],
+      "@example/ui": [
+        "libs/example-ui/src/index.ts"
+      ],
+      "@ngrx-signal-forms": [
+        "libs/ngrx-signal-forms/src/index.ts"
+      ],
+      "@ngrx-signal-forms/validation": [
+        "libs/ngrx-signal-forms/ngrx-signal-forms-validation/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

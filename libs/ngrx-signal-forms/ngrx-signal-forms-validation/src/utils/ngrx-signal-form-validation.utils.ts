@@ -1,5 +1,5 @@
-import { isObject }                     from '../utils/utils';
-import { ValidatorConfig, ValidatorFn } from './ngrx-signal-form-validation.types';
+import { isObject }                     from '../../../src/lib/utils/utils';
+import { ValidatorConfig, ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 
 export function normalizeValidators<TFormValue>(
   idPath: string,

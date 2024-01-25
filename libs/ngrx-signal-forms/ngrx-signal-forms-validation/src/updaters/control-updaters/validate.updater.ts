@@ -1,8 +1,8 @@
-import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
-import { ValidatorFn }                 from '../../validation/ngrx-signal-form-validation.types';
-import { updatersPipe }                from '../ngrx-signal-form-control.updater';
-import { setErrors }                   from './set-errors.updater';
-import { setWarnings }                 from './set-warnings.updater';
+import { NgrxSignalFormStateUpdateFn } from '../../../../src/lib/types/ngrx-signal-form.types';
+import { setErrors }                   from '../../../../src/lib/updaters/control-updaters/set-errors.updater';
+import { setWarnings }                 from '../../../../src/lib/updaters/control-updaters/set-warnings.updater';
+import { updatersPipe }                from '../../../../src/lib/updaters/ngrx-signal-form-control.updater';
+import { ValidatorFn }                 from '../../types/ngrx-signal-form-validation.types';
 
 export function validate<TFormState>(
   formState: TFormState,
