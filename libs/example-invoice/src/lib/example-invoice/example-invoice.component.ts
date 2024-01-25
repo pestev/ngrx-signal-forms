@@ -1,17 +1,21 @@
-import { CommonModule }                                       from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
-import { ExampleCardComponent }                               from '@example/ui';
+import { CommonModule }                                                from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject }          from '@angular/core';
+import { ExampleCardComponent }                                        from '@example/ui';
 import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective,
   withNgrxSignalForm
-}                                                             from '@ngrx-signal-forms';
-import { max, min, required, withNgrxSignalFormValidation }   from '@ngrx-signal-forms/validation';
-import { signalStore }                                        from '@ngrx/signals';
-import { ExampleCompany, ExampleItem }                        from '../types/example.types';
-import { ExampleAddressComponent }                            from './example-address/example-address.component';
-import { ExampleCompanyComponent }                            from './example-company/example-company.component';
+}                                                                      from '@ngrx-signal-forms';
+import { max, min, minLength, required, withNgrxSignalFormValidation } from '@ngrx-signal-forms/validation';
+import { signalStore }                                                 from '@ngrx/signals';
+import { ExampleCompany, ExampleItem }                                 from '../types/example.types';
+import {
+  ExampleAddressComponent
+}                                                                      from './example-address/example-address.component';
+import {
+  ExampleCompanyComponent
+}                                                                      from './example-company/example-company.component';
 
 interface ExampleInvoice {
   id: number;
@@ -81,7 +85,7 @@ const signalExampleInvoiceStore = signalStore(
       }
     },
     softValidators: {
-      invoiceNumber: required
+      invoiceNumber: [ required, minLength(3) ]
     }
   })
 );

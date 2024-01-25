@@ -4,7 +4,7 @@ import { ValidatorConfig, ValidatorFn } from '../types/ngrx-signal-form-validati
 export function normalizeValidators<TFormValue>(
   idPath: string,
   validatorsConfig?: ValidatorConfig<TFormValue>
-): Record<string, ValidatorFn> {
+): Record<string, ValidatorFn[]> {
 
   if (!validatorsConfig) {
     return {};
@@ -14,10 +14,15 @@ export function normalizeValidators<TFormValue>(
     return Object.entries(validatorsConfig).reduce((acc, [ k, v ]) => {
       const key = `${ idPath }.${ k }`;
       return Object.assign(acc, normalizeValidators(key, v));
-    }, {} as Record<string, ValidatorFn>);
+    }, {} as Record<string, ValidatorFn[]>);
   }
 
   return {
-    [idPath]: validatorsConfig
+    [idPath]: ensureArray(validatorsConfig)
   };
+}
+
+function ensureArray<T>(v: T | T[]): T[] {
+
+  return Array.isArray(v) ? v : [ v ];
 }

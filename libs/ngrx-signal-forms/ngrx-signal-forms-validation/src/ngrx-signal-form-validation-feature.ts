@@ -18,8 +18,7 @@ import {
 }                                          from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, tap } from 'rxjs';
 import {
-  ValidatorConfig,
-  ValidatorFn
+  ValidatorConfig
 }                                          from './types/ngrx-signal-form-validation.types';
 import {
   validate
@@ -66,8 +65,8 @@ export function withNgrxSignalFormValidation<
 }) {
 
   const { formName, validators, softValidators } = config;
-  const normalizedValidators: Record<string, ValidatorFn> = normalizeValidators(formName, validators);
-  const normalizedSoftValidators: Record<string, ValidatorFn> = normalizeValidators(formName, softValidators);
+  const normalizedValidators = normalizeValidators(formName, validators);
+  const normalizedSoftValidators = normalizeValidators(formName, softValidators);
 
   return signalStoreFeature(
     {

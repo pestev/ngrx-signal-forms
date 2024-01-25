@@ -1,4 +1,4 @@
-import { BaseControl, Primitive } from '../../../src/lib/types/ngrx-signal-form.types';
+import { BaseControl, Primitive } from '@ngrx-signal-forms';
 
 export type ValidatorFn = <TFormState>(
   controlState: BaseControl,
@@ -7,7 +7,7 @@ export type ValidatorFn = <TFormState>(
 
 export type ValidatorConfig<TFormValue> =
   TFormValue extends Primitive
-  ? ValidatorFn
+  ? ValidatorFn | ValidatorFn[]
   : TFormValue extends Array<infer E>
     ? ValidatorConfig<E>
     : TFormValue extends object
