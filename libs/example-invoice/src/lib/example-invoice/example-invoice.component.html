@@ -1,3 +1,17 @@
+<button (click)="resetToInitial()">Reset to initial value</button>
+<button (click)="loadInvoice(1)">Load #1</button>
+<button (click)="loadInvoice(2)">Load #2</button>
+
+@if (isLoadingSignal()) {
+  <p>Loading data...</p>
+}
+
+@if (apiErrorSignal(); as errorMsg) {
+  <p>{{ errorMsg }}</p>
+}
+
+<hr />
+
 <form [ngrxSignalForm]="store">
   <h3>Invoice number: <input [ngrxSignalFormControl]="formSignal.controls.invoiceNumber()" type="text" /></h3>
 
@@ -57,6 +71,10 @@
               <td><input [ngrxSignalFormControl]="itemState.controls.vat" type="number"></td>
             }
             <td><input [ngrxSignalFormControl]="itemState.controls.totalPriceWithVat" type="number"></td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6">No items found.</td>
           </tr>
         }
       </tbody>

@@ -38,7 +38,7 @@ export function withNgrxSignalFormValidation<
   TFormValue
 >(config: {
   formName: TFormName,
-  formValue: TFormValue,
+  initialFormValue: TFormValue,
   validators?: ValidatorConfig<TFormValue>,
   softValidators?: ValidatorConfig<TFormValue>
 }): SignalStoreFeature<
@@ -59,7 +59,7 @@ export function withNgrxSignalFormValidation<
   TFormValue
 >(config: {
   formName: TFormName,
-  formValue: TFormValue,
+  initialFormValue: TFormValue,
   validators?: ValidatorConfig<TFormValue>,
   softValidators?: ValidatorConfig<TFormValue>
 }) {

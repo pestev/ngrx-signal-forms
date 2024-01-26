@@ -44,6 +44,9 @@ import {
   ngrxSignalFormStateUpdater
 }                           from './updaters/ngrx-signal-form-state.updater';
 import {
+  resetFormUpdater
+}                           from './updaters/state-updaters/reset-form.updater';
+import {
   creator
 }                           from './utils/ngrx-signal-form-create.utils';
 
@@ -70,7 +73,7 @@ export function withNgrxSignalForm<
   TFormValue extends NgrxControlValue
 >(config: {
   formName: TFormName,
-  formValue: TFormValue
+  initialFormValue: TFormValue
 }): SignalStoreFeature<
   {
     state: object,
@@ -86,7 +89,7 @@ export function withNgrxSignalForm<
       formStateAsFormattedJSON: Signal<string>,
     },
     methods: NgrxSignalFormStoreFeatureMethods & {
-      reset(v: TFormValue): void;
+      reset(formValue?: TFormValue): void;
     }
   }
 >;
@@ -104,11 +107,11 @@ export function withNgrxSignalForm<
   TFormValue
 >(config: {
   formName: TFormName,
-  formValue: TFormValue
+  initialFormValue: TFormValue
 }): SignalStoreFeature {
 
-  const { formName, formValue } = config;
-  const formState = creator(formName, formValue);
+  const { formName, initialFormValue } = config;
+  const formState = creator(formName, initialFormValue);
 
   return signalStoreFeature(
     withState({ formState: formState }),
@@ -117,7 +120,7 @@ export function withNgrxSignalForm<
 
       return {
         isValid: computed(() => !store.formState().hasErrors),
-        
+
         formValue: computed(() => store.formState().value as TFormValue),
 
         formStateAsJSON: computed(() => JSON.stringify(store.formState(), null, 4)),
@@ -129,8 +132,9 @@ export function withNgrxSignalForm<
     withMethods(store => {
 
       return {
-        reset: (value: TFormValue): void => {
-          patchState(store, { formState: creator(formName, value) });
+        reset: (formValue?: TFormValue): void => {
+
+          patchState(store, resetFormUpdater(formName, formValue ?? config.initialFormValue));
         },
 
         // TODO try to type value, based on controlId
