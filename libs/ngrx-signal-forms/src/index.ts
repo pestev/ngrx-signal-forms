@@ -11,5 +11,6 @@ export *                       from './lib/types/ngrx-signal-form.types';
 export { NgrxSignalFormState } from './lib/types/ngrx-signal-form-deduced.types';
 
 export * from './lib/updaters/ngrx-signal-form-control.updater';
+export * from './lib/updaters/state-updaters/reset-form.updater';
 
 export { hasValidLength } from './lib/utils/utils';

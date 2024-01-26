@@ -1,5 +1,11 @@
 <fieldset>
   <legend>{{ title }}</legend>
 
+  <label>
+    Name:
+
+    <input [ngrxSignalFormControl]="companyFormState.controls.name" type="text">
+  </label>
+
   <s-f-example-address [addressFormState]="companyFormState.controls.address"></s-f-example-address>
 </fieldset>
