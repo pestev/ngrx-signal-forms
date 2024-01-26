@@ -43,6 +43,8 @@ export class ExampleInvoiceComponent {
 
   protected readonly isLoadingSignal = this.store.isLoading;
 
+  protected readonly isSavingSignal = this.store.isSaving;
+
   protected readonly apiErrorSignal = this.store.apiError;
 
   constructor() {
@@ -57,5 +59,9 @@ export class ExampleInvoiceComponent {
 
   resetToInitial(): void {
     this.store.reset();
+  }
+
+  submit(): void {
+    this.store.submit();
   }
 }

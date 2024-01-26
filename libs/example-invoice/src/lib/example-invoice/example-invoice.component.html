@@ -6,6 +6,10 @@
   <p>Loading data...</p>
 }
 
+@if (isSavingSignal()) {
+  <p>Saving form...</p>
+}
+
 @if (apiErrorSignal(); as errorMsg) {
   <p>{{ errorMsg }}</p>
 }
@@ -14,6 +18,10 @@
 
 <form [ngrxSignalForm]="store">
   <h3>Invoice number: <input [ngrxSignalFormControl]="formSignal.controls.invoiceNumber()" type="text" /></h3>
+
+  <div>
+    <button (click)="submit()" type="button">Save</button>
+  </div>
 
   <s-f-example-card class="common-info">
     <s-f-example-company [companyFormState]="formSignal.controls.company()" title="Company"></s-f-example-company>

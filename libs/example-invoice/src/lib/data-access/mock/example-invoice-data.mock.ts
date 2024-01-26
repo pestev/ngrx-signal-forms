@@ -38,6 +38,25 @@ export function getOne(id: number): Observable<ExampleInvoice> {
   return of(entity);
 }
 
+export function save(entity: ExampleInvoice): Observable<ExampleInvoice> {
+  const index = invoicesData.findIndex(e => e.id === entity.id);
+
+  if (index === -1) {
+    const entityWithGeneratedId = {
+      ...entity,
+      id: getNextId()
+    };
+
+    invoicesData.push(entityWithGeneratedId);
+
+    return of(entityWithGeneratedId);
+  }
+
+  invoicesData[index] = entity;
+
+  return of(entity);
+}
+
 function generateItems(length: number): ExampleItem[] {
   return Array.from({ length }, (_, i) => ({
     id: i,
@@ -48,4 +67,14 @@ function generateItems(length: number): ExampleItem[] {
     vat: 20,
     totalPriceWithVat: 12
   }));
+}
+
+function getNextId(): number {
+  if (!invoicesData.length) {
+    return 1;
+  }
+
+  const sortedIds = invoicesData.map(e => e.id).sort();
+
+  return sortedIds[sortedIds.length - 1];
 }
