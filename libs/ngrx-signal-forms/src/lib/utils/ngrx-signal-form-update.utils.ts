@@ -25,10 +25,11 @@ export function updateGroupBasedOnChildren<
   const value: Record<string, unknown> = {};
   const errors: Record<string, unknown> = {};
   const warnings: Record<string, unknown> = {};
-  let isDirty = state.isDirty;
-  let isTouched = state.isTouched;
-  let hasErrors = state.hasErrors;
-  let hasWarnings = state.hasWarnings;
+  let isDirty = false;
+  let isTouched = false;
+  let hasErrors = false;
+  let hasWarnings = false;
+  let isValidating = false;
 
   Object.keys(updatedControls).forEach(controlKey => {
     const prevControl: BaseControl =
@@ -58,6 +59,10 @@ export function updateGroupBasedOnChildren<
       hasWarnings = true;
       warnings[controlKey] = control.warnings;
     }
+
+    if (control.isValidating) {
+      isValidating = true;
+    }
   });
 
   return Object.assign({}, state, {
@@ -66,6 +71,7 @@ export function updateGroupBasedOnChildren<
     isTouched,
     hasErrors,
     hasWarnings,
+    isValidating,
     errors,
     warnings,
     controls: updatedControls
@@ -90,10 +96,11 @@ export function updateArrayBasedOnChildren<
   const value: NgrxControlValue[] = [];
   const errors: Record<string, unknown> = {};
   const warnings: Record<string, unknown> = {};
-  let isDirty = state.isDirty;
-  let isTouched = state.isTouched;
-  let hasErrors = state.hasErrors;
-  let hasWarnings = state.hasWarnings;
+  let isDirty = false;
+  let isTouched = false;
+  let hasErrors = false;
+  let hasWarnings = false;
+  let isValidating = false;
 
   updatedControls.forEach((control, key) => {
 
@@ -121,6 +128,10 @@ export function updateArrayBasedOnChildren<
       hasWarnings = true;
       warnings[key] = control.warnings;
     }
+
+    if (control.isValidating) {
+      isValidating = true;
+    }
   });
 
   return Object.assign({}, state, {
@@ -129,6 +140,7 @@ export function updateArrayBasedOnChildren<
     isTouched,
     hasErrors,
     hasWarnings,
+    isValidating,
     errors,
     warnings,
     controls: updatedControls

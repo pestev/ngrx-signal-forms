@@ -1,6 +1,6 @@
 import { ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 
-export function min(minValue: number): ValidatorFn {
+export function min(minValue: number): ValidatorFn<number, unknown> {
   return controlState => {
     return isBelowMin(controlState.value, minValue) ? {
       min: `${ controlState.id } must be higher then ${ minValue }!`

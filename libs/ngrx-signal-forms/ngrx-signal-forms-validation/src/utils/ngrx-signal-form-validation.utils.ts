@@ -1,10 +1,21 @@
-import { isObject }                     from '../../../src/lib/utils/utils';
-import { ValidatorConfig, ValidatorFn } from '../types/ngrx-signal-form-validation.types';
+import { ensureArray, isObject }                  from '../../../src/lib/utils/utils';
+import { AsyncValidatorConfig, AsyncValidatorFn } from '../types/ngrx-signal-form-async-validation.types';
+import { ValidatorConfig, ValidatorFn }           from '../types/ngrx-signal-form-validation.types';
 
-export function normalizeValidators<TFormValue>(
+export function normalizeValidators<TValue, TFormState>(
   idPath: string,
-  validatorsConfig?: ValidatorConfig<TFormValue>
-): Record<string, ValidatorFn[]> {
+  validatorsConfig?: ValidatorConfig<TValue, TFormState>
+): Record<string, ValidatorFn<TValue, TFormState>[]>;
+
+export function normalizeValidators<TValue, TFormState>(
+  idPath: string,
+  validatorsConfig?: AsyncValidatorConfig<TValue, TFormState>
+): Record<string, AsyncValidatorFn<TValue, TFormState>[]>;
+
+export function normalizeValidators<TValue, TFormState>(
+  idPath: string,
+  validatorsConfig?: ValidatorConfig<TValue, TFormState> | AsyncValidatorConfig<TValue, TFormState>
+): Record<string, ValidatorFn<TValue, TFormState>[]> | Record<string, AsyncValidatorFn<TValue, TFormState>[]> {
 
   if (!validatorsConfig) {
     return {};
@@ -14,15 +25,10 @@ export function normalizeValidators<TFormValue>(
     return Object.entries(validatorsConfig).reduce((acc, [ k, v ]) => {
       const key = `${ idPath }.${ k }`;
       return Object.assign(acc, normalizeValidators(key, v));
-    }, {} as Record<string, ValidatorFn[]>);
+    }, {});
   }
 
   return {
     [idPath]: ensureArray(validatorsConfig)
   };
-}
-
-function ensureArray<T>(v: T | T[]): T[] {
-
-  return Array.isArray(v) ? v : [ v ];
 }

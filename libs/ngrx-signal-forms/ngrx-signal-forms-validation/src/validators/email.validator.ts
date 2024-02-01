@@ -1,7 +1,6 @@
-import { BaseControl } from '../../../src/lib/types/ngrx-signal-form.types';
 import { ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 
-export const email: ValidatorFn = (controlState: BaseControl) => {
+export const email: ValidatorFn<string, unknown> = (controlState) => {
   return isEmail(controlState.value) ? {} : {
     email: `${ controlState.id } must be valid email address!`
   };

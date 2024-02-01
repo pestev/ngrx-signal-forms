@@ -1,5 +1,6 @@
 export * from './ngrx-signal-form-validation-feature';
 
+export * from './types/ngrx-signal-form-async-validation.types';
 export * from './types/ngrx-signal-form-validation.types';
 
 export * from './updaters/control-updaters/validate.updater';

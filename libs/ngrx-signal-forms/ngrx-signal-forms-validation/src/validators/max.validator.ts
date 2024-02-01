@@ -1,6 +1,6 @@
 import { ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 
-export function max(maxValue: number): ValidatorFn {
+export function max(maxValue: number): ValidatorFn<number, unknown> {
   return controlState => {
     return isAboveMax(controlState.value, maxValue) ? {
       max: `${ controlState.id } must be lower then ${ maxValue }!`

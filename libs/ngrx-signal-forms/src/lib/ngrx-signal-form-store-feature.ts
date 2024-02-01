@@ -32,6 +32,9 @@ import {
   setErrors
 }                           from './updaters/control-updaters/set-errors.updater';
 import {
+  setIsValidating
+}                           from './updaters/control-updaters/set-is-validating.updater';
+import {
   setValue
 }                           from './updaters/control-updaters/set-value.updater';
 import {
@@ -54,8 +57,9 @@ export type NgrxSignalFormStoreFeatureMethods = {
   updateValue(controlId: string, value: NgrxControlValue): void;
   updateTouched(controlId: string, isTouched: boolean): void;
   updateDisabled(controlId: string, isDisabled: boolean): void;
-  updateErrors(controlId: string, errors: Record<string, unknown>): void;
-  updateWarnings(controlId: string, warnings: Record<string, unknown>): void;
+  updateErrors(controlId: string, errors: Record<string, unknown>, append?: boolean): void;
+  updateWarnings(controlId: string, warnings: Record<string, unknown>, append?: boolean): void;
+  updateIsValidating(controlId: string, isValidating: boolean): void;
 }
 
 /**
@@ -171,9 +175,9 @@ export function withNgrxSignalForm<
           }
         },
 
-        updateErrors: (controlId: string, errors: Record<string, unknown>): void => {
+        updateErrors: (controlId: string, errors: Record<string, unknown>, append?: boolean): void => {
           const formState = store.formState();
-          const updater = setErrors(errors);
+          const updater = setErrors(errors, append);
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
@@ -182,9 +186,20 @@ export function withNgrxSignalForm<
           }
         },
 
-        updateWarnings: (controlId: string, warnings: Record<string, unknown>): void => {
+        updateWarnings: (controlId: string, warnings: Record<string, unknown>, append?: boolean): void => {
           const formState = store.formState();
-          const updater = setWarnings(warnings);
+          const updater = setWarnings(warnings, append);
+          const updatedFormState =
+            ngrxSignalFormStateUpdater(formState, controlId, updater);
+
+          if (formState !== updatedFormState) {
+            patchState(store, { formState: updatedFormState });
+          }
+        },
+
+        updateIsValidating: (controlId: string, isValidating: boolean): void => {
+          const formState = store.formState();
+          const updater = setIsValidating(isValidating);
           const updatedFormState =
             ngrxSignalFormStateUpdater(formState, controlId, updater);
 
@@ -192,6 +207,7 @@ export function withNgrxSignalForm<
             patchState(store, { formState: updatedFormState });
           }
         }
+
       };
     })
   );

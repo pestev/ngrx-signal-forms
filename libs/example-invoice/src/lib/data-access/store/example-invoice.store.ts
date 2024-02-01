@@ -1,6 +1,7 @@
 import { withNgrxSignalForm }                                          from '@ngrx-signal-forms';
 import { max, min, minLength, required, withNgrxSignalFormValidation } from '@ngrx-signal-forms/validation';
 import { signalStore }                                                 from '@ngrx/signals';
+import { delay, of }                                                   from 'rxjs';
 import { ExampleInvoice }                                              from '../../types/example.types';
 import { withExampleData }                                             from './example-invoice-data.feature';
 
@@ -28,7 +29,17 @@ const exampleInvoiceInitial: ExampleInvoice = {
   dueDate: '',
   inclVat: false,
   totalPriceInclVat: 0,
-  items: []
+  items: [
+    {
+      id: 100,
+      name: 'Item number 100',
+      quantity: 1,
+      unitPrice: 10,
+      totalPrice: 10,
+      vat: 20,
+      totalPriceWithVat: 12
+    }
+  ]
 };
 
 export const signalExampleInvoiceStore = signalStore(
@@ -36,6 +47,7 @@ export const signalExampleInvoiceStore = signalStore(
     formName: FORM_NAME,
     initialFormValue: exampleInvoiceInitial
   }),
+
   withNgrxSignalFormValidation({
     formName: FORM_NAME,
     initialFormValue: exampleInvoiceInitial,
@@ -50,8 +62,16 @@ export const signalExampleInvoiceStore = signalStore(
     },
     softValidators: {
       invoiceNumber: [ required, minLength(3) ]
+    },
+    asyncValidators: {
+      company: {
+        // name: (control) => inject(ExampleInvoiceApiService).validateCompanyName(control.value)
+        name: (control) =>
+          of({ asyncRequired: `Server response: Name "${ control.value }" failed!` }).pipe(delay(2000))
+      }
     }
   }),
+
   withExampleData({
     formName: FORM_NAME,
     initialValue: exampleInvoiceInitial

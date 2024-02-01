@@ -12,6 +12,7 @@ export interface BaseControl<TValue = unknown> {
   isDirty: boolean;
   isDisabled: boolean;
   isTouched: boolean;
+  isValidating: boolean;
   hasWarnings: boolean;
   hasErrors: boolean;
   warnings: Record<string, unknown>;

@@ -1,21 +1,9 @@
-import { BaseControl } from '../../../src/lib/types/ngrx-signal-form.types';
-import { isObject }    from '../../../src/lib/utils/utils';
+import { isEmpty }     from '@ngrx-signal-forms';
 import { ValidatorFn } from '../types/ngrx-signal-form-validation.types';
 
-export const required: ValidatorFn = (controlState: BaseControl) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const required: ValidatorFn<any, unknown> = (controlState) => {
   return isEmpty(controlState.value) ? {
     required: `${ controlState.id } must not be empty!`
   } : {};
 };
-
-function isEmpty(value: unknown): boolean {
-  if (Array.isArray(value)) {
-    return value.length === 0;
-  }
-
-  if (isObject(value)) {
-    return Object.keys(value).length === 0;
-  }
-
-  return !value;
-}

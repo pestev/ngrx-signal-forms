@@ -1,17 +1,17 @@
-import { BaseControl, Primitive } from '@ngrx-signal-forms';
+import { NgrxSignalFormState, Primitive } from '@ngrx-signal-forms';
 
-export type ValidatorFn = <TFormState>(
-  controlState: BaseControl,
+export type ValidatorFn<TValue, TFormState> = (
+  controlState: NgrxSignalFormState<TValue>,
   formState: TFormState
 ) => Record<string, unknown>
 
-export type ValidatorConfig<TFormValue> =
-  TFormValue extends Primitive
-  ? ValidatorFn | ValidatorFn[]
-  : TFormValue extends Array<infer E>
-    ? ValidatorConfig<E>
-    : TFormValue extends object
-      ? { [K in keyof TFormValue & string]?: ValidatorConfig<TFormValue[K]> }
+export type ValidatorConfig<TValue, TFormState> =
+  TValue extends Primitive
+  ? ValidatorFn<TValue, TFormState> | ValidatorFn<TValue, TFormState>[]
+  : TValue extends Array<infer E>
+    ? ValidatorConfig<E, TFormState>
+    : TValue extends object
+      ? { [K in keyof TValue & string]?: ValidatorConfig<TValue[K], TFormState> }
       : never;
 
 // ***** Tests ***** //

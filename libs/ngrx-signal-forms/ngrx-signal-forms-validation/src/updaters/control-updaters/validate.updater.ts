@@ -1,19 +1,16 @@
-import { BaseControl, NgrxSignalFormStateUpdateFn } from '../../../../src/lib/types/ngrx-signal-form.types';
 import {
-  setErrors
-}                                                   from '../../../../src/lib/updaters/control-updaters/set-errors.updater';
-import {
-  setWarnings
-}                                                   from '../../../../src/lib/updaters/control-updaters/set-warnings.updater';
-import {
+  NgrxSignalFormState,
+  NgrxSignalFormStateUpdateFn,
+  setErrors,
+  setWarnings,
   updatersPipe
-}                                                   from '../../../../src/lib/updaters/ngrx-signal-form-control.updater';
-import { ValidatorFn }                              from '../../types/ngrx-signal-form-validation.types';
+}                      from '@ngrx-signal-forms';
+import { ValidatorFn } from '../../types/ngrx-signal-form-validation.types';
 
-export function validate<TFormState>(
+export function validate<TValue, TFormState extends NgrxSignalFormState<TValue>>(
   formState: TFormState,
-  validators: Record<string, ValidatorFn[]>,
-  softValidators: Record<string, ValidatorFn[]>
+  validators: Record<string, ValidatorFn<TValue, TFormState>[]>,
+  softValidators: Record<string, ValidatorFn<TValue, TFormState>[]>
 ): NgrxSignalFormStateUpdateFn {
 
   return controlState => {
@@ -23,12 +20,20 @@ export function validate<TFormState>(
 
     if (Object.hasOwn(validators, controlState.vId)) {
       const validatorsFn = validators[controlState.vId];
-      errors = validateFn(validatorsFn, controlState, formState);
+      errors = validateFn<TValue, TFormState>(
+        validatorsFn,
+        controlState as unknown as NgrxSignalFormState<TValue>,
+        formState
+      );
     }
 
     if (Object.hasOwn(softValidators, controlState.vId)) {
       const validatorsFn = softValidators[controlState.vId];
-      warnings = validateFn(validatorsFn, controlState, formState);
+      warnings = validateFn<TValue, TFormState>(
+        validatorsFn,
+        controlState as unknown as NgrxSignalFormState<TValue>,
+        formState
+      );
     }
 
     return updatersPipe(
@@ -38,11 +43,11 @@ export function validate<TFormState>(
   };
 }
 
-function validateFn<TControlState extends BaseControl, TFormState>(
-  validatorsFn: ValidatorFn[],
-  controlState: TControlState,
+function validateFn<TControlValue, TFormState>(
+  validatorsFn: ValidatorFn<TControlValue, TFormState>[],
+  controlState: NgrxSignalFormState<TControlValue>,
   formState: TFormState
-) {
+): Record<string, unknown> {
 
   return validatorsFn.reduce((r, vFn) => {
     return Object.assign(r, vFn(controlState, formState));

@@ -1,7 +1,7 @@
 import { hasValidLength } from '@ngrx-signal-forms';
 import { ValidatorFn }    from '../types/ngrx-signal-form-validation.types';
 
-export function minLength(minLength: number): ValidatorFn {
+export function minLength(minLength: number): ValidatorFn<string, unknown> {
   return controlState => {
     return isShortLength(controlState.value, minLength) ? {
       minLength: `${ controlState.id } length must be higher then ${ minLength }!`

@@ -48,6 +48,7 @@ export function generateGroup<
     isDisabled: false,
     isDirty: false,
     isTouched: false,
+    isValidating: false,
     errors: {},
     warnings: {},
     controls: generateGroupControls(id, value, vId)
@@ -89,6 +90,7 @@ function generateArray<
     isDisabled: false,
     isDirty: false,
     isTouched: false,
+    isValidating: false,
     errors: {},
     warnings: {},
     controls: generateArrayControls(id, value, vId || id)
@@ -125,6 +127,7 @@ function generateControl<
     isDisabled: false,
     isDirty: false,
     isTouched: false,
+    isValidating: false,
     errors: {},
     warnings: {}
   };
