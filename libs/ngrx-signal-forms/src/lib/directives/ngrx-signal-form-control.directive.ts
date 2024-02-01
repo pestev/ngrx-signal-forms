@@ -1,16 +1,9 @@
-import { Directive, effect, Inject, Input, Optional, Self, signal, WritableSignal } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR }                                  from '@angular/forms';
-import {
-  NgrxSignalFormStoreFeatureMethods
-}                                                                                   from '../ngrx-signal-form-store-feature';
-import {
-  NgrxSignalFormControl,
-  Primitive
-}                                                                                   from '../types/ngrx-signal-form.types';
-import {
-  NgrxSignalFormStylingDirective
-}                                                                                   from './ngrx-signal-form-styling.directive';
-import { NgrxSignalFormDirective }                                                  from './ngrx-signal-form.directive';
+import { Directive, effect, Inject, input, Optional, Self } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR }          from '@angular/forms';
+import { NgrxSignalFormStoreFeatureMethods }                from '../ngrx-signal-form-store-feature';
+import { NgrxSignalFormControl, Primitive }                 from '../types/ngrx-signal-form.types';
+import { NgrxSignalFormStylingDirective }                   from './ngrx-signal-form-styling.directive';
+import { NgrxSignalFormDirective }                          from './ngrx-signal-form.directive';
 
 @Directive({
   selector: '[ngrxSignalFormControl]',
@@ -27,7 +20,10 @@ export class NgrxSignalFormControlDirective<
   TStore extends NgrxSignalFormStoreFeatureMethods
 > {
 
-  private formControlSignal: WritableSignal<NgrxSignalFormControl<TValue> | null> = signal(null);
+  readonly formControlSignal = input.required<NgrxSignalFormControl<TValue> | null>({
+    alias: 'ngrxSignalFormControl'
+  });
+
   private readonly valueAccessor: ControlValueAccessor;
 
   constructor(
@@ -44,11 +40,6 @@ export class NgrxSignalFormControlDirective<
     this.changeDisabled();
     this.changesFromElement();
     this.touchedElement();
-  }
-
-  @Input({ required: true })
-  set ngrxSignalFormControl(v: NgrxSignalFormControl<TValue>) {
-    this.formControlSignal.set(v);
   }
 
   private writeToElement(): void {
