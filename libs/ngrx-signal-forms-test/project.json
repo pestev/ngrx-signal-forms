@@ -1,7 +1,7 @@
 {
   "name": "ngrx-signal-forms-test",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/ngrx-signal-forms/src",
+  "sourceRoot": "libs/ngrx-signal-forms-test/src",
   "prefix": "ngrx",
   "tags": [],
   "projectType": "library",
@@ -12,14 +12,14 @@
         "{workspaceRoot}/dist/{projectRoot}"
       ],
       "options": {
-        "project": "libs/ngrx-signal-forms/ng-package.json"
+        "project": "libs/ngrx-signal-forms-test/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/ngrx-signal-forms/tsconfig.lib.prod.json"
+          "tsConfig": "libs/ngrx-signal-forms-test/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/ngrx-signal-forms/tsconfig.lib.json"
+          "tsConfig": "libs/ngrx-signal-forms-test/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -30,7 +30,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "libs/ngrx-signal-forms/jest.config.ts"
+        "jestConfig": "libs/ngrx-signal-forms-test/jest.config.ts"
       }
     },
     "lint": {
