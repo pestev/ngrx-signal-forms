@@ -1,14 +1,15 @@
-import { NgrxSignalFormState, Primitive } from '@ngrx-signal-forms-test';
-import { Observable }                     from 'rxjs';
+import { BaseControl, Primitive } from '@ngrx-signal-forms-test';
+import { Observable }             from 'rxjs';
 
-export type AsyncValidatorFn<TValue, TFormState> = (
-  controlState: NgrxSignalFormState<TValue>,
+// TODO infer type of controlState value, so controlState will have correct value and not unknown
+export type AsyncValidatorFn<TFormState> = (
+  controlState: BaseControl,
   formState: TFormState
 ) => Observable<Record<string, unknown>>
 
 export type AsyncValidatorConfig<TValue, TFormState> =
   TValue extends Primitive
-  ? AsyncValidatorFn<TValue, TFormState> | AsyncValidatorFn<TValue, TFormState>[]
+  ? AsyncValidatorFn<TFormState> | AsyncValidatorFn<TFormState>[]
   : TValue extends Array<infer E>
     ? AsyncValidatorConfig<E, TFormState>
     : TValue extends object

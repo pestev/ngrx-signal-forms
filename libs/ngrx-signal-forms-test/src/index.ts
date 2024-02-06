@@ -25,3 +25,4 @@ export * from './lib/updaters/state-updaters/reset-form.updater';
 
 export *                           from './lib/utils/ngrx-signal-form.utils';
 export { isEmpty, hasValidLength } from './lib/utils/utils';
+export *                           from './lib/utils/iterators/iterable-form-state-signal';

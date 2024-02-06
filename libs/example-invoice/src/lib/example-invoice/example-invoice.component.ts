@@ -7,7 +7,7 @@ import {
   NgrxSignalFormDirective
 }                                                             from '@ngrx-signal-forms-test';
 import {
-  signalExampleInvoiceStore
+  SignalExampleInvoiceStore
 }                                                             from '../data-access/store/example-invoice.store';
 import {
   ExampleAddressComponent
@@ -32,12 +32,12 @@ import {
   styleUrls: [ './example-invoice.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    signalExampleInvoiceStore
+    SignalExampleInvoiceStore
   ]
 })
 export class ExampleInvoiceComponent {
 
-  protected readonly store = inject(signalExampleInvoiceStore);
+  protected readonly store = inject(SignalExampleInvoiceStore);
 
   protected readonly formSignal = this.store.formState;
 

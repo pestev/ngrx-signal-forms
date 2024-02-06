@@ -1,11 +1,9 @@
-import { inject, Injector, Signal }                                                         from '@angular/core';
+import { computed, inject, ProviderToken, Signal, untracked }                               from '@angular/core';
 import {
+  BaseControl,
   isEmpty,
-  isFormArrayControlSignal,
-  isFormControlSignal,
-  isFormGroupControlSignal,
+  iterableFormStateSignal,
   NgrxControlValue,
-  NgrxSignalFormGroupControls,
   NgrxSignalFormState,
   NgrxSignalFormStoreFeatureMethods,
   updateRecursive
@@ -15,9 +13,6 @@ import { patchState, SignalStoreFeature, signalStoreFeature, type, withHooks, wi
 import {
   rxMethod
 }                                                                                           from '@ngrx/signals/rxjs-interop';
-import {
-  DeepSignal
-}                                                                                           from '@ngrx/signals/src/deep-signal';
 import { combineLatest, distinctUntilChanged, map, pipe, switchMap, tap }                   from 'rxjs';
 import {
   AsyncValidatorConfig,
@@ -37,18 +32,23 @@ export type NgrxSignalFormValidationFeatureMethods = {
   validate(): void;
 }
 
+export type AsyncService<T> = T extends ProviderToken<infer U> ? U : never;
+
 // TODO is possible to infer TFormValue, so formValue doesnt need to be explicitly provided?
 
 export function withNgrxSignalFormValidation<
   TFormName extends string,
-  TFormValue
+  TFormValue,
+  TAsyncServiceToken extends ProviderToken<unknown>,
+  TAsyncService extends AsyncService<TAsyncServiceToken>
 >(config: {
   formName: TFormName,
   initialFormValue: TFormValue,
   validators?: ValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
   softValidators?: ValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
-  asyncValidators?: AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
-  asyncSoftValidators?: AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>
+  asyncServiceToken?: TAsyncServiceToken,
+  asyncValidators?: (service: TAsyncService) => AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
+  asyncSoftValidators?: (service: TAsyncService) => AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
 }): SignalStoreFeature<
   {
     state: { formState: NgrxSignalFormState<TFormValue> },
@@ -64,21 +64,22 @@ export function withNgrxSignalFormValidation<
 
 export function withNgrxSignalFormValidation<
   TFormName extends string,
-  TFormValue
+  TFormValue,
+  TAsyncServiceToken extends ProviderToken<unknown>,
+  TAsyncService extends AsyncService<TAsyncServiceToken>
 >(config: {
   formName: TFormName,
   initialFormValue: TFormValue,
   validators?: ValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
   softValidators?: ValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
-  asyncValidators?: AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
-  asyncSoftValidators?: AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>
+  asyncServiceToken?: TAsyncServiceToken,
+  asyncValidators?: (service: TAsyncService) => AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>,
+  asyncSoftValidators?: (service: TAsyncService) => AsyncValidatorConfig<TFormValue, NgrxSignalFormState<TFormValue>>
 }) {
 
   const { formName } = config;
   const normalizedValidators = normalizeValidators(formName, config.validators);
   const normalizedSoftValidators = normalizeValidators(formName, config.softValidators);
-  const normalizedAsyncValidators = normalizeValidators(formName, config.asyncValidators);
-  const normalizedAsyncSoftValidators = normalizeValidators(formName, config.asyncSoftValidators);
 
   return signalStoreFeature(
     {
@@ -88,10 +89,6 @@ export function withNgrxSignalFormValidation<
     },
 
     withMethods(store => {
-
-      for (const a of iterableFormStateSignal(store.formState)) {
-        //
-      }
 
       return {
         validate: () => {
@@ -109,15 +106,11 @@ export function withNgrxSignalFormValidation<
         },
 
         asyncValidateErrorsControl: rxMethod<{
-          controlState: NgrxSignalFormState<NgrxControlValue>;
+          formValue: TFormValue,
+          controlState: BaseControl,
           formState: NgrxSignalFormState<TFormValue>,
-          fns: AsyncValidatorFn<NgrxControlValue, NgrxSignalFormState<TFormValue>>[]
+          fns: AsyncValidatorFn<NgrxSignalFormState<TFormValue>>[]
         }>(pipe(
-          distinctUntilChanged(
-            (prev, curr) => prev === curr,
-            c => c.formState.value
-          ),
-          tap(a => console.debug('async validation config: ', a)),
           map(({ controlState, formState, fns }) => ({
             controlState,
             fn: combineLatest(
@@ -132,9 +125,39 @@ export function withNgrxSignalFormValidation<
           switchMap(({ controlState, fn }) => fn.pipe(
               tapResponse(
                 (validationResult) => {
-                  console.debug('async validation result: ', controlState.id, validationResult);
                   store.updateIsValidating(controlState.id, false);
                   store.updateErrors(controlState.id, validationResult, true);
+                },
+                () => {
+                  store.updateIsValidating(controlState.id, false);
+                }
+              )
+            )
+          )
+        )),
+
+        asyncValidateWarningsControl: rxMethod<{
+          formValue: TFormValue,
+          controlState: BaseControl,
+          formState: NgrxSignalFormState<TFormValue>,
+          fns: AsyncValidatorFn<NgrxSignalFormState<TFormValue>>[]
+        }>(pipe(
+          map(({ controlState, formState, fns }) => ({
+            controlState,
+            fn: combineLatest(
+              fns.map(f => f(controlState, formState)),
+              (...results) => results.reduce(
+                (rr, r) => Object.assign(rr, r),
+                {}
+              )
+            )
+          })),
+          tap(({ controlState }) => store.updateIsValidating(controlState.id, true)),
+          switchMap(({ controlState, fn }) => fn.pipe(
+              tapResponse(
+                (validationResult) => {
+                  store.updateIsValidating(controlState.id, false);
+                  store.updateWarnings(controlState.id, validationResult, true);
                 },
                 () => {
                   store.updateIsValidating(controlState.id, false);
@@ -165,7 +188,10 @@ export function withNgrxSignalFormValidation<
       };
     }),
 
-    withMethods((store) => {
+    withMethods((
+      store,
+      asyncService = config.asyncServiceToken ? inject(config.asyncServiceToken) : null
+    ) => {
 
       return {
         validateOnValueChange: rxMethod<NgrxControlValue>(
@@ -175,43 +201,41 @@ export function withNgrxSignalFormValidation<
           )
         ),
 
-        registerAsyncValidationErrors: (injector = inject(Injector)) => {
-          //
-          // const formState = store.formState();
-          //
-          // updateRecursive(formState, (controlState) => {
-          //   if (Object.hasOwn(normalizedAsyncValidators, controlState.id)) {
-          //     const payload$ = toObservable(store.formState, { injector }).pipe(
-          //       map(formState => ({
-          //         controlState: controlState as NgrxSignalFormState<NgrxControlValue>,
-          //         formState,
-          //         fns: normalizedAsyncValidators[controlState.id]
-          //       }))
-          //     );
-          //
-          //     store.asyncValidateErrorsControl(payload$);
-          //   }
-          //
-          //   return controlState;
-          // });
-        }
+        registerAsyncValidation: () => {
 
-        // registerAsyncValidationWarnings: (store) => {
-        //
-        //   const formState = store.formState();
-        //
-        //   updateRecursive(formState, (control) => {
-        //     if (Object.hasOwn(normalizedAsyncSoftValidators, control.id)) {
-        //       store.asyncValidateWarningsControl({
-        //         controlState: control,
-        //         formState,
-        //         fn: normalizedAsyncSoftValidators[control.id]
-        //       });
-        //     }
-        //
-        //     return control;
-        //   });
-        // }
+          const normalizedAsyncValidators = normalizeValidators(formName, config.asyncValidators?.(asyncService));
+          const normalizedAsyncSoftValidators = normalizeValidators(formName, config.asyncSoftValidators?.(asyncService));
+
+          for (const controlStateSignal of iterableFormStateSignal(store.formState)) {
+            const controlState = controlStateSignal();
+
+            if (Object.hasOwn(normalizedAsyncValidators, controlState.id)) {
+              const payload = computed(() => {
+                return {
+                  formValue: store.formValue(),
+                  controlState: untracked(controlStateSignal),
+                  formState: untracked(store.formState),
+                  fns: normalizedAsyncValidators[controlState.id]
+                };
+              });
+
+              store.asyncValidateErrorsControl(payload);
+            }
+
+            if (Object.hasOwn(normalizedAsyncSoftValidators, controlState.id)) {
+              const payload = computed(() => {
+                return {
+                  formValue: store.formValue(),
+                  controlState: untracked(controlStateSignal),
+                  formState: untracked(store.formState),
+                  fns: normalizedAsyncSoftValidators[controlState.id]
+                };
+              });
+
+              store.asyncValidateWarningsControl(payload);
+            }
+          }
+        }
 
       };
     }),
@@ -219,34 +243,8 @@ export function withNgrxSignalFormValidation<
     withHooks({
       onInit(store) {
         store.validateOnValueChange(store.formValue);
-        store.registerAsyncValidationErrors();
-        // store.registerAsyncValidationWarnings(store);
+        store.registerAsyncValidation();
       }
     })
   );
-}
-
-function* iterableFormStateSignal<TValue>(state: DeepSignal<unknown>): Generator<DeepSignal<unknown>> {
-
-  if (isFormGroupControlSignal<TValue & object>(state)) {
-    const controls = state.controls as DeepSignal<NgrxSignalFormGroupControls<TValue & object>>;
-
-    for (const key of Object.keys(state.controls())) {
-      const control = controls[key as keyof typeof controls];
-      yield* iterableFormStateSignal(control as DeepSignal<unknown>);
-    }
-
-    yield state;
-  }
-
-  if (isFormArrayControlSignal(state)) {
-    // TODO currently is not possible to return array elements as signals, since ngrx signal store doesnt provide them as DeepSignals
-
-    yield state;
-  }
-
-  if (isFormControlSignal(state)) {
-    yield state;
-  }
-
 }

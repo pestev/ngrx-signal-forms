@@ -10,12 +10,12 @@ export function normalizeValidators<TValue, TFormState>(
 export function normalizeValidators<TValue, TFormState>(
   idPath: string,
   validatorsConfig?: AsyncValidatorConfig<TValue, TFormState>
-): Record<string, AsyncValidatorFn<TValue, TFormState>[]>;
+): Record<string, AsyncValidatorFn<TFormState>[]>;
 
 export function normalizeValidators<TValue, TFormState>(
   idPath: string,
   validatorsConfig?: ValidatorConfig<TValue, TFormState> | AsyncValidatorConfig<TValue, TFormState>
-): Record<string, ValidatorFn<TValue, TFormState>[]> | Record<string, AsyncValidatorFn<TValue, TFormState>[]> {
+): Record<string, ValidatorFn<TValue, TFormState>[]> | Record<string, AsyncValidatorFn<TFormState>[]> {
 
   if (!validatorsConfig) {
     return {};

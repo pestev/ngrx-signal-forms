@@ -19,7 +19,6 @@ export class ExampleInvoiceApiService {
   }
 
   validateCompanyName(name: string) {
-    console.debug('validating name: ', name);
 
     if (!name) {
       return of({ asyncRequired: `Server response: Name must not be empty!` });

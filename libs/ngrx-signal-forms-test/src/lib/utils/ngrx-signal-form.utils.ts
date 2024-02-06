@@ -1,20 +1,27 @@
-import { DeepSignal } from '@ngrx/signals/src/deep-signal';
+import { Signal }   from '@angular/core';
+import {
+  DeepSignal
+}                   from '@ngrx/signals/src/deep-signal';
 import {
   BaseControl,
   NgrxSignalFormArray,
   NgrxSignalFormControl,
   NgrxSignalFormGroup,
   Primitive
-}                     from '../types/ngrx-signal-form.types';
-import { isObject }   from './utils';
+}                   from '../types/ngrx-signal-form.types';
+import { isObject } from './utils';
 
 export function isFormControlSignal<TValue extends Primitive>(
-  s: DeepSignal<unknown>
-): s is DeepSignal<NgrxSignalFormControl<TValue>> {
+  s: Signal<unknown>
+): s is Signal<NgrxSignalFormControl<TValue>> {
 
   return isFormControl(s());
 }
 
+/*
+ TODO remove DeepSignal dependency, because it is not exported from @ngrx/signals
+ or better: ask ngrx if its possible to publish DeepSignal interface
+ */
 export function isFormGroupControlSignal<TValue extends object>(
   s: DeepSignal<unknown>
 ): s is DeepSignal<NgrxSignalFormGroup<TValue>> {
@@ -23,8 +30,8 @@ export function isFormGroupControlSignal<TValue extends object>(
 }
 
 export function isFormArrayControlSignal<TValue>(
-  s: DeepSignal<unknown>
-): s is DeepSignal<NgrxSignalFormArray<TValue>> {
+  s: Signal<unknown>
+): s is Signal<NgrxSignalFormArray<TValue>> {
 
   return isFormArrayControl(s());
 }
@@ -52,6 +59,7 @@ export function isFormArrayControl<TValue>(
 
 function isBaseControl(c: unknown): c is BaseControl & { controls?: unknown } {
 
+// TODO modify comparison to reflect actual BaseControl interface
   return isObject(c)
     && Object.hasOwn(c, 'id')
     && Object.hasOwn(c, 'isDirty')

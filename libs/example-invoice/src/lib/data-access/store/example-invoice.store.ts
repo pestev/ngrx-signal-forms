@@ -1,8 +1,8 @@
 import { withNgrxSignalForm }                                          from '@ngrx-signal-forms-test';
 import { max, min, minLength, required, withNgrxSignalFormValidation } from '@ngrx-signal-forms-test/validation';
 import { signalStore }                                                 from '@ngrx/signals';
-import { delay, of }                                                   from 'rxjs';
 import { ExampleInvoice }                                              from '../../types/example.types';
+import { ExampleInvoiceApiService }                                    from '../api/example-invoice-api.service';
 import { withExampleData }                                             from './example-invoice-data.feature';
 
 export const FORM_NAME = 'exampleInvoiceForm';
@@ -42,7 +42,7 @@ const exampleInvoiceInitial: ExampleInvoice = {
   ]
 };
 
-export const signalExampleInvoiceStore = signalStore(
+export const SignalExampleInvoiceStore = signalStore(
   withNgrxSignalForm({
     formName: FORM_NAME,
     initialFormValue: exampleInvoiceInitial
@@ -63,13 +63,17 @@ export const signalExampleInvoiceStore = signalStore(
     softValidators: {
       invoiceNumber: [ required, minLength(3) ]
     },
-    asyncValidators: {
+    asyncServiceToken: ExampleInvoiceApiService,
+    asyncValidators: (service) => ({
       company: {
-        // name: (control) => inject(ExampleInvoiceApiService).validateCompanyName(control.value)
-        name: (control) =>
-          of({ asyncRequired: `Server response: Name "${ control.value }" failed!` }).pipe(delay(2000))
+        name: (control) => service.validateCompanyName(control.value as string)
       }
-    }
+    }),
+    asyncSoftValidators: (service) => ({
+      client: {
+        name: (control) => service.validateCompanyName(control.value as string)
+      }
+    })
   }),
 
   withExampleData({
