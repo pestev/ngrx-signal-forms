@@ -2,7 +2,7 @@ import { inject, Signal }                                                from '@
 import {
   NgrxSignalFormStoreFeatureMethods,
   resetFormUpdater
-}                                                                        from '@ngrx-signal-forms';
+}                                                                        from '@ngrx-signal-forms-test';
 import {
   tapResponse
 }                                                                        from '@ngrx/operators';

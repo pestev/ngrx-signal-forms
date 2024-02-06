@@ -1,46 +1,37 @@
-import { inject, Injector, Signal } from '@angular/core';
+import { inject, Injector, Signal }                                                         from '@angular/core';
 import {
   isEmpty,
+  isFormArrayControlSignal,
+  isFormControlSignal,
+  isFormGroupControlSignal,
   NgrxControlValue,
+  NgrxSignalFormGroupControls,
   NgrxSignalFormState,
   NgrxSignalFormStoreFeatureMethods,
   updateRecursive
-}                                   from '@ngrx-signal-forms';
-import {
-  tapResponse
-}                                   from '@ngrx/operators';
-import {
-  patchState,
-  SignalStoreFeature,
-  signalStoreFeature,
-  type,
-  withHooks,
-  withMethods
-}                                   from '@ngrx/signals';
+}                                                                                           from '@ngrx-signal-forms-test';
+import { tapResponse }                                                                      from '@ngrx/operators';
+import { patchState, SignalStoreFeature, signalStoreFeature, type, withHooks, withMethods } from '@ngrx/signals';
 import {
   rxMethod
-}                                   from '@ngrx/signals/rxjs-interop';
+}                                                                                           from '@ngrx/signals/rxjs-interop';
 import {
-  combineLatest,
-  distinctUntilChanged,
-  map,
-  pipe,
-  switchMap,
-  tap
-}                                   from 'rxjs';
+  DeepSignal
+}                                                                                           from '@ngrx/signals/src/deep-signal';
+import { combineLatest, distinctUntilChanged, map, pipe, switchMap, tap }                   from 'rxjs';
 import {
   AsyncValidatorConfig,
   AsyncValidatorFn
-}                                   from './types/ngrx-signal-form-async-validation.types';
+}                                                                                           from './types/ngrx-signal-form-async-validation.types';
 import {
   ValidatorConfig
-}                                   from './types/ngrx-signal-form-validation.types';
+}                                                                                           from './types/ngrx-signal-form-validation.types';
 import {
   validate
-}                                   from './updaters/control-updaters/validate.updater';
+}                                                                                           from './updaters/control-updaters/validate.updater';
 import {
   normalizeValidators
-}                                   from './utils/ngrx-signal-form-validation.utils';
+}                                                                                           from './utils/ngrx-signal-form-validation.utils';
 
 export type NgrxSignalFormValidationFeatureMethods = {
   validate(): void;
@@ -97,6 +88,10 @@ export function withNgrxSignalFormValidation<
     },
 
     withMethods(store => {
+
+      for (const a of iterableFormStateSignal(store.formState)) {
+        //
+      }
 
       return {
         validate: () => {
@@ -231,39 +226,27 @@ export function withNgrxSignalFormValidation<
   );
 }
 
-//
-// function* testIterator<TValue>(state: DeepSignal<unknown>): Generator<DeepSignal<unknown>> {
-//
-//   if (isFormGroupControlSignal<TValue & object>(state)) {
-//     console.debug('test is form object');
-//
-//     const controls = state.controls as DeepSignal<NgrxSignalFormGroupControls<TValue & object>>;
-//
-//     for (const key of Object.keys(state.controls())) {
-//       const control = controls[key as keyof typeof controls];
-//       yield* testIterator(control as DeepSignal<unknown>);
-//     }
-//
-//     yield state;
-//   }
-//
-//   if (isFormArrayControlSignal(state)) {
-//     console.debug('test is form array');
-//
-//     const controls = state.controls as DeepSignal<NgrxSignalFormState<TValue>[]>;
-//
-//     for (const key of state.controls().keys()) {
-//       // This can not work since ngrx DeepSignal doesnt provide deep signal for array values :(
-//       const control = controls[key];
-//       yield* testIterator(control);
-//     }
-//
-//     yield state;
-//   }
-//
-//   if (isFormControl(state)) {
-//     console.debug('test is form control');
-//     yield state;
-//   }
-//
-// }
+function* iterableFormStateSignal<TValue>(state: DeepSignal<unknown>): Generator<DeepSignal<unknown>> {
+
+  if (isFormGroupControlSignal<TValue & object>(state)) {
+    const controls = state.controls as DeepSignal<NgrxSignalFormGroupControls<TValue & object>>;
+
+    for (const key of Object.keys(state.controls())) {
+      const control = controls[key as keyof typeof controls];
+      yield* iterableFormStateSignal(control as DeepSignal<unknown>);
+    }
+
+    yield state;
+  }
+
+  if (isFormArrayControlSignal(state)) {
+    // TODO currently is not possible to return array elements as signals, since ngrx signal store doesnt provide them as DeepSignals
+
+    yield state;
+  }
+
+  if (isFormControlSignal(state)) {
+    yield state;
+  }
+
+}

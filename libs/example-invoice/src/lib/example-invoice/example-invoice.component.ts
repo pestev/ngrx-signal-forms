@@ -5,7 +5,7 @@ import {
   NgrxSignalFormAccessorsModule,
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective
-}                                                             from '@ngrx-signal-forms';
+}                                                             from '@ngrx-signal-forms-test';
 import {
   signalExampleInvoiceStore
 }                                                             from '../data-access/store/example-invoice.store';

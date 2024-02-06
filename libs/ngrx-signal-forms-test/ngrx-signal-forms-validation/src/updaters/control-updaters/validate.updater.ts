@@ -4,7 +4,7 @@ import {
   setErrors,
   setWarnings,
   updatersPipe
-}                      from '@ngrx-signal-forms';
+}                      from '@ngrx-signal-forms-test';
 import { ValidatorFn } from '../../types/ngrx-signal-form-validation.types';
 
 export function validate<TValue, TFormState extends NgrxSignalFormState<TValue>>(

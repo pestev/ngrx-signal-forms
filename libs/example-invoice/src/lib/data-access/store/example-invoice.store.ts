@@ -1,5 +1,5 @@
-import { withNgrxSignalForm }                                          from '@ngrx-signal-forms';
-import { max, min, minLength, required, withNgrxSignalFormValidation } from '@ngrx-signal-forms/validation';
+import { withNgrxSignalForm }                                          from '@ngrx-signal-forms-test';
+import { max, min, minLength, required, withNgrxSignalFormValidation } from '@ngrx-signal-forms-test/validation';
 import { signalStore }                                                 from '@ngrx/signals';
 import { delay, of }                                                   from 'rxjs';
 import { ExampleInvoice }                                              from '../../types/example.types';

@@ -6,7 +6,7 @@ import {
   NgrxSignalFormControlDirective,
   NgrxSignalFormDirective,
   NgrxSignalFormStylingDirective
-}                                  from '@ngrx-signal-forms';
+}                                  from '@ngrx-signal-forms-test';
 
 @Component({
   selector: 'ngrx-signal-forms-root',

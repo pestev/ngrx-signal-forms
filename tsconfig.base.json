@@ -24,11 +24,14 @@
       "@example/ui": [
         "libs/example-ui/src/index.ts"
       ],
-      "@ngrx-signal-forms": [
+      "ngrx-signal-forms": [
         "libs/ngrx-signal-forms/src/index.ts"
       ],
-      "@ngrx-signal-forms/validation": [
-        "libs/ngrx-signal-forms/ngrx-signal-forms-validation/src/index.ts"
+      "@ngrx-signal-forms-test": [
+        "libs/ngrx-signal-forms-test/src/index.ts"
+      ],
+      "@ngrx-signal-forms-test/validation": [
+        "libs/ngrx-signal-forms-test/ngrx-signal-forms-validation/src/index.ts"
       ]
     }
   },

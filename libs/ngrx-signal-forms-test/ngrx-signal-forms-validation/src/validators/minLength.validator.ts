@@ -1,4 +1,4 @@
-import { hasValidLength } from '@ngrx-signal-forms';
+import { hasValidLength } from '@ngrx-signal-forms-test';
 import { ValidatorFn }    from '../types/ngrx-signal-form-validation.types';
 
 export function minLength(minLength: number): ValidatorFn<string, unknown> {

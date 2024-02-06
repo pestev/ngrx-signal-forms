@@ -16,7 +16,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "ngrxSignalFormsTest",
+            "prefix": "ngrx",
             "style": "camelCase"
           }
         ],
@@ -24,7 +24,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "ngrx-signal-forms-test",
+            "prefix": "ngrx",
             "style": "kebab-case"
           }
         ]

@@ -1,4 +1,4 @@
-import { NgrxSignalFormState, Primitive } from '@ngrx-signal-forms';
+import { NgrxSignalFormState, Primitive } from '@ngrx-signal-forms-test';
 
 export type ValidatorFn<TValue, TFormState> = (
   controlState: NgrxSignalFormState<TValue>,

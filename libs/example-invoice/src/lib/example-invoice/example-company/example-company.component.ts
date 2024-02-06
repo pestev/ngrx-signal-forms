@@ -1,12 +1,16 @@
-import { CommonModule }                                                                       from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input }                                          from '@angular/core';
-import { DefaultValueAccessorDirective, NgrxSignalFormControlDirective, NgrxSignalFormGroup } from '@ngrx-signal-forms';
+import { CommonModule }                              from '@angular/common';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  DefaultValueAccessorDirective,
+  NgrxSignalFormControlDirective,
+  NgrxSignalFormGroup
+}                                                    from '@ngrx-signal-forms-test';
 import {
   ExampleCompany
-}                                                                                             from '../../types/example.types';
+}                                                    from '../../types/example.types';
 import {
   ExampleAddressComponent
-}                                                                                             from '../example-address/example-address.component';
+}                                                    from '../example-address/example-address.component';
 
 @Component({
   selector: 's-f-example-company',

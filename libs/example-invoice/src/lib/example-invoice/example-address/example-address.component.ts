@@ -5,7 +5,7 @@ import {
   NgrxSignalFormControlDirective,
   NgrxSignalFormGroup,
   NgrxSignalFormStylingDirective
-}                                                    from '@ngrx-signal-forms';
+}                                                    from '@ngrx-signal-forms-test';
 import { Address }                                   from '../../types/example.types';
 
 @Component({

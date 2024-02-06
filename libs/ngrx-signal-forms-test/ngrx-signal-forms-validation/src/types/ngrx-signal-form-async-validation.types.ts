@@ -1,4 +1,4 @@
-import { NgrxSignalFormState, Primitive } from '@ngrx-signal-forms';
+import { NgrxSignalFormState, Primitive } from '@ngrx-signal-forms-test';
 import { Observable }                     from 'rxjs';
 
 export type AsyncValidatorFn<TValue, TFormState> = (
