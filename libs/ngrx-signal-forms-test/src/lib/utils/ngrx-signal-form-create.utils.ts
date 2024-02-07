@@ -51,6 +51,8 @@ export function generateGroup<
     isValidating: false,
     errors: {},
     warnings: {},
+    asyncErrors: {},
+    asyncWarnings: {},
     controls: generateGroupControls(id, value, vId)
   };
 }
@@ -92,7 +94,9 @@ function generateArray<
     isTouched: false,
     isValidating: false,
     errors: {},
+    asyncErrors: {},
     warnings: {},
+    asyncWarnings: {},
     controls: generateArrayControls(id, value, vId || id)
   };
 }
@@ -129,6 +133,8 @@ function generateControl<
     isTouched: false,
     isValidating: false,
     errors: {},
-    warnings: {}
+    asyncErrors: {},
+    warnings: {},
+    asyncWarnings: {}
   };
 }

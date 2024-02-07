@@ -66,12 +66,13 @@ export const SignalExampleInvoiceStore = signalStore(
     asyncServiceToken: ExampleInvoiceApiService,
     asyncValidators: (service) => ({
       company: {
-        name: (control) => service.validateCompanyName(control.value as string)
+        // name: (control) => service.validateCompanyName(control.value as string)
+        name: service.validateCompanyName
       }
     }),
     asyncSoftValidators: (service) => ({
       client: {
-        name: (control) => service.validateCompanyName(control.value as string)
+        name: service.validateCompanyName
       }
     })
   }),

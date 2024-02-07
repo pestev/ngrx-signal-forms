@@ -1,12 +1,12 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
 import { isEmpty }                     from '../../utils/utils';
 
-export function setErrors(errors: Record<string, unknown>, append = false): NgrxSignalFormStateUpdateFn {
+export function setAsyncErrors(errors: Record<string, unknown>, append = false): NgrxSignalFormStateUpdateFn {
   return state => {
 
-    const e = append ? Object.assign({}, state.errors, errors) : errors;
+    const e = append ? Object.assign({}, state.asyncErrors, errors) : errors;
 
-    const hasErrors = !isEmpty(e) || !isEmpty(state.asyncErrors);
+    const hasErrors = !isEmpty(e) || !isEmpty(state.errors);
 
     // TODO maybe compare also when control has errors?
     if (!state.hasErrors && !hasErrors) {
@@ -14,7 +14,7 @@ export function setErrors(errors: Record<string, unknown>, append = false): Ngrx
     }
 
     return Object.assign({}, state, {
-      errors: e,
+      asyncErrors: e,
       hasErrors
     });
   };

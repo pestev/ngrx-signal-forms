@@ -6,6 +6,9 @@ import {
   NgrxSignalFormGroup,
   NgrxSignalFormGroupControls
 }                              from '../types/ngrx-signal-form.types';
+import {
+  isEmpty
+}                              from './utils';
 
 export function updateGroupBasedOnChildren<
   TValue extends object,
@@ -24,7 +27,9 @@ export function updateGroupBasedOnChildren<
 
   const value: Record<string, unknown> = {};
   const errors: Record<string, unknown> = {};
+  const asyncErrors: Record<string, unknown> = {};
   const warnings: Record<string, unknown> = {};
+  const asyncWarnings: Record<string, unknown> = {};
   let isDirty = false;
   let isTouched = false;
   let hasErrors = false;
@@ -52,12 +57,22 @@ export function updateGroupBasedOnChildren<
 
     if (control.hasErrors) {
       hasErrors = true;
-      errors[controlKey] = control.errors;
+      if (!isEmpty(control.errors)) {
+        errors[controlKey] = control.errors;
+      }
+      if (!isEmpty(control.asyncErrors)) {
+        asyncErrors[controlKey] = control.asyncErrors;
+      }
     }
 
     if (control.hasWarnings) {
       hasWarnings = true;
-      warnings[controlKey] = control.warnings;
+      if (!isEmpty(control.warnings)) {
+        warnings[controlKey] = control.warnings;
+      }
+      if (!isEmpty(control.asyncWarnings)) {
+        asyncWarnings[controlKey] = control.asyncWarnings;
+      }
     }
 
     if (control.isValidating) {
@@ -73,7 +88,9 @@ export function updateGroupBasedOnChildren<
     hasWarnings,
     isValidating,
     errors,
+    asyncErrors,
     warnings,
+    asyncWarnings,
     controls: updatedControls
   });
 }
@@ -95,7 +112,9 @@ export function updateArrayBasedOnChildren<
 
   const value: NgrxControlValue[] = [];
   const errors: Record<string, unknown> = {};
+  const asyncErrors: Record<string, unknown> = {};
   const warnings: Record<string, unknown> = {};
+  const asyncWarnings: Record<string, unknown> = {};
   let isDirty = false;
   let isTouched = false;
   let hasErrors = false;
@@ -121,12 +140,22 @@ export function updateArrayBasedOnChildren<
 
     if (control.hasErrors) {
       hasErrors = true;
-      errors[key] = control.errors;
+      if (!isEmpty(control.errors)) {
+        errors[key] = control.errors;
+      }
+      if (!isEmpty(control.asyncErrors)) {
+        asyncErrors[key] = control.asyncErrors;
+      }
     }
 
     if (control.hasWarnings) {
       hasWarnings = true;
-      warnings[key] = control.warnings;
+      if (!isEmpty(control.warnings)) {
+        warnings[key] = control.warnings;
+      }
+      if (!isEmpty(control.asyncWarnings)) {
+        asyncWarnings[key] = control.asyncWarnings;
+      }
     }
 
     if (control.isValidating) {
@@ -142,7 +171,9 @@ export function updateArrayBasedOnChildren<
     hasWarnings,
     isValidating,
     errors,
+    asyncErrors,
     warnings,
+    asyncWarnings,
     controls: updatedControls
   });
 }

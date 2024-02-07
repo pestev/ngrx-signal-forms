@@ -17,6 +17,8 @@ export * from './lib/updaters/control-updaters/mark-as-enabled.updater';
 export * from './lib/updaters/control-updaters/mark-as-pristine.updater';
 export * from './lib/updaters/control-updaters/mark-as-touched.updater';
 export * from './lib/updaters/control-updaters/mark-as-untouched.updater';
+export * from './lib/updaters/control-updaters/set-async-errors.updater';
+export * from './lib/updaters/control-updaters/set-async-warnings.updater';
 export * from './lib/updaters/control-updaters/set-errors.updater';
 export * from './lib/updaters/control-updaters/set-is-validating.updater';
 export * from './lib/updaters/control-updaters/set-value.updater';

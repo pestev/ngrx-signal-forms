@@ -1,12 +1,12 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
 import { isEmpty }                     from '../../utils/utils';
 
-export function setWarnings(warnings: Record<string, unknown>, append = false): NgrxSignalFormStateUpdateFn {
+export function setAsyncWarnings(warnings: Record<string, unknown>, append = false): NgrxSignalFormStateUpdateFn {
   return state => {
 
-    const w = append ? Object.assign({}, state.warnings, warnings) : warnings;
+    const w = append ? Object.assign({}, state.asyncWarnings, warnings) : warnings;
 
-    const hasWarnings = !isEmpty(w) || !isEmpty(state.asyncWarnings);
+    const hasWarnings = !isEmpty(w) || !isEmpty(state.warnings);
 
     // TODO maybe compare also when control has warnings?
     if (!state.hasWarnings && !hasWarnings) {
@@ -14,7 +14,7 @@ export function setWarnings(warnings: Record<string, unknown>, append = false): 
     }
 
     return Object.assign({}, state, {
-      warnings: w,
+      asyncWarnings: w,
       hasWarnings
     });
   };

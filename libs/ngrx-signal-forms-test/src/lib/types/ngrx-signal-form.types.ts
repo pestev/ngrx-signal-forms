@@ -16,7 +16,9 @@ export interface BaseControl<TValue = unknown> {
   hasWarnings: boolean;
   hasErrors: boolean;
   warnings: Record<string, unknown>;
+  asyncWarnings: Record<string, unknown>;
   errors: Record<string, unknown>;
+  asyncErrors: Record<string, unknown>;
   value: TValue;
   controls?: unknown;
 }
