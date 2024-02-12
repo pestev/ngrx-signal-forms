@@ -1,8 +1,21 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
 import { isEmpty }                     from '../../utils/utils';
 
-export function setWarnings(warnings: Record<string, unknown>, append = false): NgrxSignalFormStateUpdateFn {
+export function setWarnings(
+  id: string,
+  warnings: Record<string, unknown>,
+  append = false
+): NgrxSignalFormStateUpdateFn {
+
   return state => {
+
+    if (!id.startsWith(state.id)) {
+      return null;
+    }
+
+    if (state.id !== id) {
+      return state;
+    }
 
     const w = append ? Object.assign({}, state.warnings, warnings) : warnings;
 

@@ -25,7 +25,7 @@ export function updatersPipe(
       (s, fn) => {
         const u = fn(s);
 
-        if (u === s) {
+        if (u === null || u === s) {
           return s;
         }
 
@@ -45,11 +45,16 @@ export function updatersPipe(
  * @param state
  * @param updateFn
  */
-export function updateRecursive<
+export function ngrxSignalFormUpdater<
   TState extends BaseControl
 >(state: TState, updateFn: NgrxSignalFormStateUpdateFn): TState {
 
   const updatedState = updateFn(state);
+
+  if (updatedState === null) {
+    return state;
+  }
+
   const newState = state === updatedState ? state : updatedState;
 
   if (isFormGroupControl(state)) {
@@ -86,7 +91,7 @@ function updateGroupControls<
     const control = controls[controlKey as keyof typeof controls];
 
     const updatedControl =
-      updateRecursive(control, updateFn);
+      ngrxSignalFormUpdater(control, updateFn);
 
     if (updatedControl === control) {
       return Object.assign(newControls, { [controlKey]: control });
@@ -112,7 +117,7 @@ function updateArrayControls<
   const updatedControls = controls.map(control => {
 
     const updatedControl =
-      updateRecursive(control, updateFn);
+      ngrxSignalFormUpdater(control, updateFn);
 
     if (updatedControl === control) {
       return control;

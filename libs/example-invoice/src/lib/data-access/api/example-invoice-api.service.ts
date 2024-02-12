@@ -51,11 +51,17 @@ export class ExampleInvoiceApiService {
     return source$.pipe(
       debounceTime(300),
       map(({ controlState }) => controlState.value as string),
-      distinctUntilChanged((p, c) => {
-        console.debug('distinct: ', p === c, { p, c });
-        return p === c;
-      }),
+      distinctUntilChanged(),
       switchMap(controlValue => this.validateCompanyNameApi(controlValue))
+    );
+  };
+
+  validateItemName: AsyncValidatorFn<NgrxSignalFormState<ExampleInvoice>> = source$ => {
+    return source$.pipe(
+      debounceTime(300),
+      map(({ controlState }) => controlState.value as string),
+      distinctUntilChanged(),
+      map(() => ({ asyncRequired: `Server response: Name must not be empty!` }))
     );
   };
 

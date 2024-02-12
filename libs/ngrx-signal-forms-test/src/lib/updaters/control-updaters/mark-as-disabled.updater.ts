@@ -1,11 +1,20 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
-import { updateRecursive }             from '../ngrx-signal-form-control.updater';
 
-export const markAsDisabled: NgrxSignalFormStateUpdateFn = (state) => {
-  const updatedState = updateRecursive(state, markControlAsDisabled);
+export function markAsDisabled(id: string): NgrxSignalFormStateUpdateFn {
 
-  return state === updatedState ? state : updatedState;
-};
+  return state => {
+
+    if (state.id.startsWith(id)) {
+      return markControlAsDisabled(state);
+    }
+
+    if (!id.startsWith(state.id)) {
+      return null;
+    }
+
+    return state;
+  };
+}
 
 const markControlAsDisabled: NgrxSignalFormStateUpdateFn = (state) => {
   return state.isDisabled ? state : Object.assign({}, state, { isDisabled: true });

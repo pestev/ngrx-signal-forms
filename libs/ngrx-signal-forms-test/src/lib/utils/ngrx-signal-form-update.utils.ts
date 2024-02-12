@@ -1,14 +1,42 @@
-import { NgrxSignalFormState } from '../types/ngrx-signal-form-deduced.types';
+import { Observable, tap } from 'rxjs';
+import {
+  NgrxSignalFormState
+}                          from '../types/ngrx-signal-form-deduced.types';
 import {
   BaseControl,
   NgrxControlValue,
   NgrxSignalFormArray,
   NgrxSignalFormGroup,
   NgrxSignalFormGroupControls
-}                              from '../types/ngrx-signal-form.types';
+}                          from '../types/ngrx-signal-form.types';
 import {
   isEmpty
-}                              from './utils';
+}                          from './utils';
+
+/**
+ * Ngrx signal store didn't provide DeepSignal for array so we need to get correct state manually
+ */
+export function getCorrectControlState<TFormValue>($source: Observable<{
+  formValue: TFormValue,
+  controlState: BaseControl,
+  formState: NgrxSignalFormState<TFormValue>
+}>) {
+
+  return $source.pipe(
+    tap(d => console.debug('source for correct control state: ', d))
+  );
+}
+
+// export function getCorrectControlState<TFormValue> () {
+//   return ($source: {
+//     formValue: TFormValue,
+//     controlState: BaseControl,
+//     formState: NgrxSignalFormState<TFormValue>
+//   }) => {
+//
+//     return $source;
+//   }
+// }
 
 export function updateGroupBasedOnChildren<
   TValue extends object,

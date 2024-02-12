@@ -1,12 +1,14 @@
 import { computed, inject, ProviderToken, Signal, untracked }                               from '@angular/core';
 import {
   BaseControl,
+  getCorrectControlState,
   isEmpty,
+  isFormArrayControl,
   iterableFormStateSignal,
   NgrxControlValue,
   NgrxSignalFormState,
   NgrxSignalFormStoreFeatureMethods,
-  updateRecursive
+  ngrxSignalFormUpdater
 }                                                                                           from '@ngrx-signal-forms-test';
 import { tapResponse }                                                                      from '@ngrx/operators';
 import { patchState, SignalStoreFeature, signalStoreFeature, type, withHooks, withMethods } from '@ngrx/signals';
@@ -25,7 +27,6 @@ import {
   validate
 }                                                                                           from './updaters/control-updaters/validate.updater';
 import {
-  applyAsyncValidatorFn,
   normalizeAsyncValidators,
   normalizeValidators
 }                                                                                           from './utils/ngrx-signal-form-validation.utils';
@@ -100,7 +101,7 @@ export function withNgrxSignalFormValidation<
 
           const formState = store.formState();
           const validationFn = validate(formState, normalizedValidators, normalizedSoftValidators);
-          const updatedFormState = updateRecursive(formState, validationFn);
+          const updatedFormState = ngrxSignalFormUpdater(formState, validationFn);
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -117,51 +118,20 @@ export function withNgrxSignalFormValidation<
             controlState: BaseControl,
             formState: NgrxSignalFormState<TFormValue>
           }>(pipe(
+            getCorrectControlState,
             tap(({ controlState }) => store.updateIsValidating(controlStateId, true)),
             fn,
             tapResponse(
               validationResult => {
-                console.debug('validation result: ', controlStateId, validationResult);
                 store.updateIsValidating(controlStateId, false);
                 store.updateAsyncErrors(controlStateId, validationResult, true);
               },
               e => {
-                console.debug('validation error: ', controlStateId, e);
                 store.updateIsValidating(controlStateId, false);
               }
             )
           ));
         },
-
-        asyncValidateErrorsControl: rxMethod<{
-          formValue: TFormValue,
-          controlState: BaseControl,
-          formState: NgrxSignalFormState<TFormValue>,
-          fn: AsyncValidatorFn<NgrxSignalFormState<TFormValue>>
-        }>(pipe(
-          tap(({ controlState }) => store.updateIsValidating(controlState.id, true)),
-
-          applyAsyncValidatorFn
-
-          // switchMap(({ controlState, formState, fn }) => of({ controlState, formState }).pipe(
-          //   tap(a => console.debug('test 1: ', a)),
-          //   fn,
-          //   tap(a => console.debug('test 2: ', a))
-          // ))
-
-          // switchMap(({ controlState, fn }) => fn.pipe(
-          //     tapResponse(
-          //       (validationResult) => {
-          //         store.updateIsValidating(controlState.id, false);
-          //         store.updateErrors(controlState.id, validationResult, true);
-          //       },
-          //       () => {
-          //         store.updateIsValidating(controlState.id, false);
-          //       }
-          //     )
-          //   )
-          // )
-        )),
 
         asyncValidateWarningsControl: rxMethod<{
           formValue: TFormValue,
@@ -233,32 +203,34 @@ export function withNgrxSignalFormValidation<
           for (const controlStateSignal of iterableFormStateSignal(store.formState)) {
             const controlState = controlStateSignal();
 
-            if (Object.hasOwn(normalizedAsyncValidators, controlState.id)) {
-              // const payload = computed(() => {
-              //   return {
-              //     formValue: store.formValue(),
-              //     controlState: untracked(controlStateSignal),
-              //     formState: untracked(store.formState),
-              //     fn: normalizedAsyncValidators[controlState.id]
-              //   };
-              // });
-              //
-              // store.asyncValidateErrorsControl(payload);
-              const payload = computed(() => {
-                return {
-                  formValue: store.formValue(),
-                  controlState: untracked(controlStateSignal),
-                  formState: untracked(store.formState)
-                };
+            // console.debug(
+            //   'register: ',
+            //   Object.hasOwn(normalizedAsyncValidators, controlState.id),
+            //   isFormArrayControl(controlState),
+            //   controlState.id
+            // );
+
+            const validatorsKeys = findValidatorKey(controlState, normalizedAsyncValidators);
+
+
+            if (validatorsKeys) {
+              validatorsKeys.forEach(validatorKey => {
+                const payload = computed(() => {
+                  return {
+                    formValue: store.formValue(),
+                    controlState: untracked(controlStateSignal),
+                    formState: untracked(store.formState)
+                  };
+                });
+
+                const generatedValidationRxFunction =
+                  store.asyncValidateErrorsControlFactory(
+                    validatorKey,
+                    normalizedAsyncValidators[validatorKey]
+                  );
+
+                generatedValidationRxFunction(payload);
               });
-
-              const generatedValidationRxFunction =
-                store.asyncValidateErrorsControlFactory(
-                  controlStateSignal().id,
-                  normalizedAsyncValidators[controlState.id]
-                );
-
-              generatedValidationRxFunction(payload);
             }
 
             if (Object.hasOwn(normalizedAsyncSoftValidators, controlState.id)) {
@@ -286,4 +258,26 @@ export function withNgrxSignalFormValidation<
       }
     })
   );
+}
+
+function findValidatorKey<TFormValue>(
+  controlState: BaseControl,
+  validators: Record<string, AsyncValidatorFn<NgrxSignalFormState<TFormValue>>>
+): string[] | null {
+
+  if (Object.hasOwn(validators, controlState.id)) {
+    // console.debug('able - has own');
+    return [ controlState.id ];
+  }
+
+  if (isFormArrayControl(controlState)) {
+    const keys = Object.keys(validators);
+    const validatorsKeys = keys.filter((key) => key.startsWith(controlState.id));
+    // console.debug('able - array: ', controlState.id, validatorsKeys);
+    return validatorsKeys || null;
+  }
+
+  // console.debug('unable');
+
+  return null;
 }

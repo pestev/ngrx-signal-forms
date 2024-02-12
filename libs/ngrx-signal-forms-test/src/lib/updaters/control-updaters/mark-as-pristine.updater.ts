@@ -1,11 +1,20 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
-import { updateRecursive }             from '../ngrx-signal-form-control.updater';
 
-export const markAsPristine: NgrxSignalFormStateUpdateFn = (state) => {
-  const updatedState = updateRecursive(state, markControlAsPristine);
+export function markAsPristine(id: string): NgrxSignalFormStateUpdateFn {
 
-  return state === updatedState ? state : updatedState;
-};
+  return state => {
+
+    if (state.id.startsWith(id)) {
+      return markControlAsPristine(state);
+    }
+
+    if (!id.startsWith(state.id)) {
+      return null;
+    }
+
+    return state;
+  };
+}
 
 const markControlAsPristine: NgrxSignalFormStateUpdateFn = (state) => {
   return state.isDirty ? Object.assign({}, state, { isDirty: false }) : state;

@@ -1,8 +1,21 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
 import { isEmpty }                     from '../../utils/utils';
 
-export function setAsyncErrors(errors: Record<string, unknown>, append = false): NgrxSignalFormStateUpdateFn {
+export function setAsyncErrors(
+  id: string,
+  errors: Record<string, unknown>,
+  append = false
+): NgrxSignalFormStateUpdateFn {
+
   return state => {
+
+    if (!id.startsWith(state.id)) {
+      return null;
+    }
+
+    if (state.id !== id) {
+      return state;
+    }
 
     const e = append ? Object.assign({}, state.asyncErrors, errors) : errors;
 

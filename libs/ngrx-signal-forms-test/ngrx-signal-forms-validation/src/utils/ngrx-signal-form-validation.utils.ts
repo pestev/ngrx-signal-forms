@@ -1,18 +1,6 @@
-import { BaseControl, NgrxSignalFormState }       from '@ngrx-signal-forms-test';
-import { Observable }                             from 'rxjs';
 import { ensureArray, isObject }                  from '../../../src/lib/utils/utils';
 import { AsyncValidatorConfig, AsyncValidatorFn } from '../types/ngrx-signal-form-async-validation.types';
 import { ValidatorConfig, ValidatorFn }           from '../types/ngrx-signal-form-validation.types';
-
-export function applyAsyncValidatorFn<TFormValue>($source: Observable<{
-  formValue: TFormValue,
-  controlState: BaseControl,
-  formState: NgrxSignalFormState<TFormValue>,
-  fn: AsyncValidatorFn<NgrxSignalFormState<TFormValue>>
-}>) {
-
-  return $source;
-}
 
 export function normalizeValidators<TValue, TFormState>(
   idPath: string,

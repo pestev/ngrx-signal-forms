@@ -1,6 +1,6 @@
 import { NgrxSignalFormState } from './ngrx-signal-form-deduced.types';
 
-export type NgrxSignalFormStateUpdateFn = <T extends BaseControl>(state: T) => T;
+export type NgrxSignalFormStateUpdateFn = <T extends BaseControl>(state: T) => T | null;
 
 export type Primitive = string | number | boolean | null | undefined;
 

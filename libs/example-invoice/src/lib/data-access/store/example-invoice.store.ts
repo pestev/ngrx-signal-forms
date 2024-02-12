@@ -38,6 +38,24 @@ const exampleInvoiceInitial: ExampleInvoice = {
       totalPrice: 10,
       vat: 20,
       totalPriceWithVat: 12
+    },
+    {
+      id: 200,
+      name: '',
+      quantity: 1,
+      unitPrice: 10,
+      totalPrice: 10,
+      vat: 20,
+      totalPriceWithVat: 12
+    },
+    {
+      id: 300,
+      name: 'Item number 300',
+      quantity: 1,
+      unitPrice: 10,
+      totalPrice: 10,
+      vat: 20,
+      totalPriceWithVat: 12
     }
   ]
 };
@@ -51,11 +69,9 @@ export const SignalExampleInvoiceStore = signalStore(
   withNgrxSignalFormValidation({
     formName: FORM_NAME,
     initialFormValue: exampleInvoiceInitial,
-    // TODO somehow remove typescript error
-    //@ ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
     validators: {
       items: {
-        name: required,
+        // name: required,
         quantity: min(1),
         vat: max(20)
       }
@@ -66,15 +82,18 @@ export const SignalExampleInvoiceStore = signalStore(
     asyncServiceToken: ExampleInvoiceApiService,
     asyncValidators: (service) => ({
       company: {
-        // name: (control) => service.validateCompanyName(control.value as string)
         name: service.validateCompanyName
-      }
-    }),
-    asyncSoftValidators: (service) => ({
-      client: {
-        name: service.validateCompanyName
+      },
+      items: {
+        name: service.validateItemName,
+        quantity: service.validateItemName
       }
     })
+    // asyncSoftValidators: (service) => ({
+    //   client: {
+    //     name: service.validateCompanyName
+    //   }
+    // })
   }),
 
   withExampleData({

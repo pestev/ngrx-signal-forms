@@ -15,10 +15,17 @@ export function validate<TValue, TFormState extends NgrxSignalFormState<TValue>>
 
   return controlState => {
 
+    const hasValidators = Object.hasOwn(validators, controlState.vId);
+    const hasSoftValidators = Object.hasOwn(softValidators, controlState.vId);
+
+    if (!hasValidators && !hasSoftValidators) {
+      return controlState;
+    }
+
     let errors: Record<string, unknown> = {};
     let warnings: Record<string, unknown> = {};
 
-    if (Object.hasOwn(validators, controlState.vId)) {
+    if (hasValidators) {
       const validatorsFn = validators[controlState.vId];
       errors = validateFn<TValue, TFormState>(
         validatorsFn,
@@ -27,7 +34,7 @@ export function validate<TValue, TFormState extends NgrxSignalFormState<TValue>>
       );
     }
 
-    if (Object.hasOwn(softValidators, controlState.vId)) {
+    if (hasSoftValidators) {
       const validatorsFn = softValidators[controlState.vId];
       warnings = validateFn<TValue, TFormState>(
         validatorsFn,
@@ -37,8 +44,8 @@ export function validate<TValue, TFormState extends NgrxSignalFormState<TValue>>
     }
 
     return updatersPipe(
-      setErrors(errors),
-      setWarnings(warnings)
+      setErrors(controlState.id, errors),
+      setWarnings(controlState.id, warnings)
     )(controlState);
   };
 }

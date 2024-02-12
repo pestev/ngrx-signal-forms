@@ -47,11 +47,9 @@ import {
   setWarnings
 }                           from './updaters/control-updaters/set-warnings.updater';
 import {
+  ngrxSignalFormUpdater,
   updatersPipe
-}                           from './updaters/ngrx-signal-form-control.updater';
-import {
-  ngrxSignalFormStateUpdater
-}                           from './updaters/ngrx-signal-form-state.updater';
+}                           from './updaters/ngrx-signal-form.updater';
 import {
   resetFormUpdater
 }                           from './updaters/state-updaters/reset-form.updater';
@@ -152,9 +150,12 @@ export function withNgrxSignalForm<
         // TODO try to type value, based on controlId
         updateValue: (controlId: string, value: unknown): void => {
           const formState = store.formState();
-          const updater = updatersPipe(setValue(value), markAsDirty);
+          const updater = updatersPipe(
+            setValue(controlId, value),
+            markAsDirty(controlId)
+          );
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater);
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -165,7 +166,7 @@ export function withNgrxSignalForm<
           const formState = store.formState();
           const updater = isTouched ? markAsTouched : markAsUntouched;
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater(controlId));
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -176,7 +177,7 @@ export function withNgrxSignalForm<
           const formState = store.formState();
           const updater = isDisabled ? markAsDisabled : markAsEnabled;
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater(controlId));
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -185,9 +186,9 @@ export function withNgrxSignalForm<
 
         updateErrors: (controlId: string, errors: Record<string, unknown>, append?: boolean): void => {
           const formState = store.formState();
-          const updater = setErrors(errors, append);
+          const updater = setErrors(controlId, errors, append);
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater);
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -196,9 +197,9 @@ export function withNgrxSignalForm<
 
         updateWarnings: (controlId: string, warnings: Record<string, unknown>, append?: boolean): void => {
           const formState = store.formState();
-          const updater = setWarnings(warnings, append);
+          const updater = setWarnings(controlId, warnings, append);
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater);
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -207,9 +208,9 @@ export function withNgrxSignalForm<
 
         updateAsyncErrors: (controlId: string, errors: Record<string, unknown>, append?: boolean): void => {
           const formState = store.formState();
-          const updater = setAsyncErrors(errors, append);
+          const updater = setAsyncErrors(controlId, errors, append);
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater);
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -218,9 +219,9 @@ export function withNgrxSignalForm<
 
         updateAsyncWarnings: (controlId: string, warnings: Record<string, unknown>, append?: boolean): void => {
           const formState = store.formState();
-          const updater = setAsyncWarnings(warnings, append);
+          const updater = setAsyncWarnings(controlId, warnings, append);
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater);
 
           if (formState !== updatedFormState) {
             patchState(store, { formState: updatedFormState });
@@ -229,11 +230,14 @@ export function withNgrxSignalForm<
 
         updateIsValidating: (controlId: string, isValidating: boolean): void => {
           const formState = store.formState();
-          const updater = setIsValidating(isValidating);
+          const updater = setIsValidating(controlId, isValidating);
           const updatedFormState =
-            ngrxSignalFormStateUpdater(formState, controlId, updater);
+            ngrxSignalFormUpdater(formState, updater);
+
+          console.debug('is update validating: ', formState !== updatedFormState, controlId, isValidating);
 
           if (formState !== updatedFormState) {
+            console.debug('update is validating: ', controlId, isValidating);
             patchState(store, { formState: updatedFormState });
           }
         }
