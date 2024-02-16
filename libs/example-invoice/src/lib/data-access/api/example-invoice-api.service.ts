@@ -1,27 +1,24 @@
-import { Injectable }                                                                from '@angular/core';
-import { NgrxSignalFormState }                                                       from '@ngrx-signal-forms-test';
+import { Injectable }                                                           from '@angular/core';
+import { NgrxSignalFormState }                                                  from '@ngrx-signal-forms-test';
 import {
-  AsyncValidatorFn
-}                                                                                    from '@ngrx-signal-forms-test/validation';
-import { debounceTime, delay, distinctUntilChanged, map, Observable, of, switchMap } from 'rxjs';
-import { ExampleInvoice }                                                            from '../../types/example.types';
+  AsyncValidatorFn,
+  createAsyncValidationResponse,
+  generateAsyncValidatorFn
+}                                                                               from '@ngrx-signal-forms-test/validation';
+import { debounceTime, delay, distinctUntilChanged, Observable, of, switchMap } from 'rxjs';
+import { ExampleInvoice }                                                       from '../../types/example.types';
 import {
   getOne,
   save
-}                                                                                    from '../mock/example-invoice-data.mock';
+}                                                                               from '../mock/example-invoice-data.mock';
 
 @Injectable({ providedIn: 'root' })
 export class ExampleInvoiceApiService {
 
-  // readonly validateCompanyName$ = rxMethod<{
-  //   controlState: BaseControl,
-  //   formState: NgrxSignalFormGroup<ExampleInvoice>
-  // }>(pipe(
-  //   debounceTime(300),
-  //   distinctUntilChanged(),
-  //   switchMap(({ controlState }) => this.validateCompanyName(controlState.value as string)),
-  //   tap(r => console.debug('res: ', r))
-  // ));
+  validateItemName = generateAsyncValidatorFn<ExampleInvoice>({
+    debounceTime: 300,
+    apiFn: (value) => this.validateNameApi(value as string)
+  });
 
   load(id: number): Observable<ExampleInvoice> {
     return getOne(id).pipe(
@@ -35,7 +32,7 @@ export class ExampleInvoiceApiService {
     );
   }
 
-  validateCompanyNameApi(name: string) {
+  validateNameApi(name: string) {
 
     if (!name) {
       return of({ asyncRequired: `Server response: Name must not be empty!` });
@@ -50,18 +47,10 @@ export class ExampleInvoiceApiService {
   validateCompanyName: AsyncValidatorFn<NgrxSignalFormState<ExampleInvoice>> = source$ => {
     return source$.pipe(
       debounceTime(300),
-      map(({ controlState }) => controlState.value as string),
-      distinctUntilChanged(),
-      switchMap(controlValue => this.validateCompanyNameApi(controlValue))
-    );
-  };
-
-  validateItemName: AsyncValidatorFn<NgrxSignalFormState<ExampleInvoice>> = source$ => {
-    return source$.pipe(
-      debounceTime(300),
-      map(({ controlState }) => controlState.value as string),
-      distinctUntilChanged(),
-      map(() => ({ asyncRequired: `Server response: Name must not be empty!` }))
+      distinctUntilChanged((p, c) => p === c, v => v.controlState.value),
+      switchMap(payload => this.validateNameApi(payload.controlState.value as string).pipe(
+        createAsyncValidationResponse({ id: payload.controlState.id })
+      ))
     );
   };
 

@@ -1,42 +1,59 @@
-import { Observable, tap } from 'rxjs';
+import { merge, NEVER, Observable, of } from 'rxjs';
 import {
   NgrxSignalFormState
-}                          from '../types/ngrx-signal-form-deduced.types';
+}                                       from '../types/ngrx-signal-form-deduced.types';
 import {
   BaseControl,
   NgrxControlValue,
   NgrxSignalFormArray,
   NgrxSignalFormGroup,
   NgrxSignalFormGroupControls
-}                          from '../types/ngrx-signal-form.types';
+}                                       from '../types/ngrx-signal-form.types';
+import {
+  findAllControlsStates
+}                                       from './ngrx-signal-form.utils';
 import {
   isEmpty
-}                          from './utils';
+}                                       from './utils';
 
 /**
  * Ngrx signal store didn't provide DeepSignal for array so we need to get correct state manually
  */
-export function getCorrectControlState<TFormValue>($source: Observable<{
-  formValue: TFormValue,
-  controlState: BaseControl,
-  formState: NgrxSignalFormState<TFormValue>
-}>) {
+export function getCorrectControlState<TFormValue>(
+  controlId: string,
+  vId: string
+) {
 
-  return $source.pipe(
-    tap(d => console.debug('source for correct control state: ', d))
-  );
+  return (payload: {
+    formValue: TFormValue,
+    controlState: BaseControl,
+    formState: NgrxSignalFormState<TFormValue>
+  }): Observable<{
+    formValue: TFormValue,
+    controlState: BaseControl,
+    formState: NgrxSignalFormState<TFormValue>
+  }> => {
+
+    if (controlId === vId) {
+      return of(payload);
+    }
+
+    const correctStates = findAllControlsStates(payload.controlState, vId, 'vId');
+
+    if (correctStates === null) {
+      // TODO throw error of return NEVER?
+      return NEVER;
+    }
+
+    const payloads = correctStates.map(controlState => of({
+      formValue: payload.formValue,
+      controlState,
+      formState: payload.formState
+    }));
+
+    return merge(...payloads);
+  };
 }
-
-// export function getCorrectControlState<TFormValue> () {
-//   return ($source: {
-//     formValue: TFormValue,
-//     controlState: BaseControl,
-//     formState: NgrxSignalFormState<TFormValue>
-//   }) => {
-//
-//     return $source;
-//   }
-// }
 
 export function updateGroupBasedOnChildren<
   TValue extends object,

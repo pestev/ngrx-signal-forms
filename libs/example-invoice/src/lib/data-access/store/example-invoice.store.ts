@@ -71,7 +71,6 @@ export const SignalExampleInvoiceStore = signalStore(
     initialFormValue: exampleInvoiceInitial,
     validators: {
       items: {
-        // name: required,
         quantity: min(1),
         vat: max(20)
       }
@@ -85,15 +84,9 @@ export const SignalExampleInvoiceStore = signalStore(
         name: service.validateCompanyName
       },
       items: {
-        name: service.validateItemName,
-        quantity: service.validateItemName
+        name: service.validateItemName
       }
     })
-    // asyncSoftValidators: (service) => ({
-    //   client: {
-    //     name: service.validateCompanyName
-    //   }
-    // })
   }),
 
   withExampleData({

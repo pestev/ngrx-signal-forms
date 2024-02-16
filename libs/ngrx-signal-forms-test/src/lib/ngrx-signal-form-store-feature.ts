@@ -234,10 +234,7 @@ export function withNgrxSignalForm<
           const updatedFormState =
             ngrxSignalFormUpdater(formState, updater);
 
-          console.debug('is update validating: ', formState !== updatedFormState, controlId, isValidating);
-
           if (formState !== updatedFormState) {
-            console.debug('update is validating: ', controlId, isValidating);
             patchState(store, { formState: updatedFormState });
           }
         }

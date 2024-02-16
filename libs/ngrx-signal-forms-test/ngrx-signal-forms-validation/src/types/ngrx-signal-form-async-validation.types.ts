@@ -7,7 +7,10 @@ export type AsyncValidatorFn<TFormState> = OperatorFunction<
     controlState: BaseControl,
     formState: TFormState
   },
-  Record<string, unknown>
+  {
+    id: string,
+    errors: Record<string, unknown>
+  }
 >;
 
 export type AsyncValidatorConfig<TValue, TFormState> =

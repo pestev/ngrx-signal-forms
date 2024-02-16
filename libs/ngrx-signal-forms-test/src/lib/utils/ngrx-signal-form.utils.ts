@@ -9,7 +9,27 @@ import {
   NgrxSignalFormGroup,
   Primitive
 }                   from '../types/ngrx-signal-form.types';
+import {
+  iterableFormState
+}                   from './iterators/iterable-form-state';
 import { isObject } from './utils';
+
+export function findAllControlsStates(
+  state: BaseControl,
+  search: unknown,
+  key: keyof BaseControl = 'id'
+): BaseControl[] | null {
+
+  const result: BaseControl[] = [];
+
+  for (const controlState of iterableFormState(state)) {
+    if (controlState[key] === search) {
+      result.push(controlState);
+    }
+  }
+
+  return result.length ? result : null;
+}
 
 export function isFormControlSignal<TValue extends Primitive>(
   s: Signal<unknown>
