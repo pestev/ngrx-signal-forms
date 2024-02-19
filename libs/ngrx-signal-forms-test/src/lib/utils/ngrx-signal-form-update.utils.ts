@@ -41,7 +41,7 @@ export function getCorrectControlState<TFormValue>(
     const correctStates = findAllControlsStates(payload.controlState, vId, 'vId');
 
     if (correctStates === null) {
-      // TODO throw error of return NEVER?
+      // TODO throw error or return NEVER?
       return NEVER;
     }
 

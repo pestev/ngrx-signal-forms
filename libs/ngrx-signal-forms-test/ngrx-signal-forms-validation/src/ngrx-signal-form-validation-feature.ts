@@ -165,7 +165,6 @@ export function withNgrxSignalFormValidation<
             ))
           ));
         }
-
       };
     }),
 
@@ -252,18 +251,16 @@ function findValidatorKey<TFormValue>(
 ): string[] | null {
 
   if (Object.hasOwn(validators, controlState.vId)) {
-    // console.debug('able - has own');
+    
     return [ controlState.vId ];
   }
 
   if (isFormArrayControl(controlState)) {
     const keys = Object.keys(validators);
     const validatorsKeys = keys.filter((key) => key.startsWith(controlState.vId));
-    // console.debug('able - array: ', controlState.id, validatorsKeys);
+
     return validatorsKeys || null;
   }
-
-  // console.debug('unable');
 
   return null;
 }

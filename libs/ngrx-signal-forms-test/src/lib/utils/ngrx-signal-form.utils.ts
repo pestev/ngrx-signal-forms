@@ -79,11 +79,9 @@ export function isFormArrayControl<TValue>(
 
 function isBaseControl(c: unknown): c is BaseControl & { controls?: unknown } {
 
-// TODO modify comparison to reflect actual BaseControl interface
   return isObject(c)
     && Object.hasOwn(c, 'id')
-    && Object.hasOwn(c, 'isDirty')
-    && Object.hasOwn(c, 'isDisabled')
-    && Object.hasOwn(c, 'value')
-    && Object.hasOwn(c, 'hasErrors');
+    && Object.hasOwn(c, 'vId')
+    && Object.hasOwn(c, 'value');
+
 }
