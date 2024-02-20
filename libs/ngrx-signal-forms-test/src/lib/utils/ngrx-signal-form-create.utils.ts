@@ -1,12 +1,15 @@
-import { NgrxSignalFormState }   from '../types/ngrx-signal-form-deduced.types';
+import { NgrxSignalFormState } from '../types/ngrx-signal-form-deduced.types';
 import {
   NgrxControlValue,
   NgrxSignalFormArray,
   NgrxSignalFormControl,
   NgrxSignalFormGroup,
   Primitive
-}                                from '../types/ngrx-signal-form.types';
-import { isObject, isPrimitive } from './utils';
+}                              from '../types/ngrx-signal-form.types';
+import {
+  isObject,
+  isPrimitive
+}                              from './common.utils';
 
 export function creator<
   TValue

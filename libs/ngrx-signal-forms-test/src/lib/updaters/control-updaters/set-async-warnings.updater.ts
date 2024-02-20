@@ -1,5 +1,5 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
-import { isEmpty }                     from '../../utils/utils';
+import { isEmpty }                     from '../../utils/common.utils';
 
 export function setAsyncWarnings(
   id: string,

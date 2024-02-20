@@ -27,5 +27,5 @@ export * from './lib/updaters/state-updaters/reset-form.updater';
 
 export *                           from './lib/utils/ngrx-signal-form.utils';
 export { getCorrectControlState }  from './lib/utils/ngrx-signal-form-update.utils';
-export { isEmpty, hasValidLength } from './lib/utils/utils';
+export { isEmpty, hasValidLength } from './lib/utils/common.utils';
 export *                           from './lib/utils/iterators/iterable-form-state-signal';

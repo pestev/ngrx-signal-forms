@@ -10,14 +10,14 @@ import {
   NgrxSignalFormGroupControls
 }                                       from '../types/ngrx-signal-form.types';
 import {
+  isEmpty
+}                                       from './common.utils';
+import {
   findAllControlsStates
 }                                       from './ngrx-signal-form.utils';
-import {
-  isEmpty
-}                                       from './utils';
 
 /**
- * Ngrx signal store didn't provide DeepSignal for array so we need to get correct state manually
+ * Ngrx signal store didn't provide DeepSignal for array, so we need to get correct states manually
  */
 export function getCorrectControlState<TFormValue>(
   controlId: string,

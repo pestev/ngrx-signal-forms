@@ -1,18 +1,20 @@
-import { Signal }   from '@angular/core';
+import { Signal } from '@angular/core';
 import {
   DeepSignal
-}                   from '@ngrx/signals/src/deep-signal';
+}                 from '@ngrx/signals/src/deep-signal';
 import {
   BaseControl,
   NgrxSignalFormArray,
   NgrxSignalFormControl,
   NgrxSignalFormGroup,
   Primitive
-}                   from '../types/ngrx-signal-form.types';
+}                 from '../types/ngrx-signal-form.types';
+import {
+  isObject
+}                 from './common.utils';
 import {
   iterableFormState
-}                   from './iterators/iterable-form-state';
-import { isObject } from './utils';
+}                 from './iterators/iterable-form-state';
 
 export function findAllControlsStates(
   state: BaseControl,

@@ -1,6 +1,6 @@
 import { NgrxSignalFormStateUpdateFn } from '../../types/ngrx-signal-form.types';
+import { isObject }                    from '../../utils/common.utils';
 import { isFormGroupControl }          from '../../utils/ngrx-signal-form.utils';
-import { isObject }                    from '../../utils/utils';
 
 export function setValue<TValue>(id: string | null, value: TValue): NgrxSignalFormStateUpdateFn {
   return state => {
